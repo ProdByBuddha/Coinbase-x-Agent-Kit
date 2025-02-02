@@ -8,6 +8,97 @@
   }
 
   body {
-    @apply font-sans antialiased bg-background text-foreground;
+    @apply font-sans antialiased bg-background text-foreground relative;
+    background: linear-gradient(135deg, hsl(227 58% 10%) 0%, hsl(227 58% 5%) 100%);
+  }
+
+  body::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: repeating-linear-gradient(
+      transparent,
+      transparent 2px,
+      rgba(45, 66, 153, 0.1) 2px,
+      rgba(45, 66, 153, 0.1) 4px
+    );
+    pointer-events: none;
+    z-index: 1;
+  }
+}
+
+@layer components {
+  .neon-border {
+    @apply border border-primary/50 shadow-[0_0_10px_rgba(79,97,205,0.3)] transition-all duration-300;
+  }
+
+  .neon-border:hover {
+    @apply border-primary shadow-[0_0_20px_rgba(79,97,205,0.5)];
+  }
+
+  .cyberpunk-card {
+    @apply relative overflow-hidden rounded-lg bg-black/50 backdrop-blur-sm;
+    box-shadow: 0 0 15px rgba(79, 97, 205, 0.2);
+  }
+
+  .cyberpunk-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(
+      90deg,
+      transparent,
+      rgba(79, 97, 205, 0.2),
+      transparent
+    );
+    transition: 0.5s;
+  }
+
+  .cyberpunk-card:hover::before {
+    left: 100%;
+  }
+
+  .cyberpunk-text {
+    @apply font-bold text-transparent bg-clip-text;
+    background-image: linear-gradient(
+      135deg,
+      hsl(227 58% 65%),
+      hsl(227 58% 85%)
+    );
+  }
+
+  .glitch-effect {
+    position: relative;
+  }
+
+  .glitch-effect:hover {
+    animation: glitch 0.3s cubic-bezier(.25, .46, .45, .94) both infinite;
+  }
+
+  @keyframes glitch {
+    0% {
+      transform: translate(0);
+    }
+    20% {
+      transform: translate(-2px, 2px);
+    }
+    40% {
+      transform: translate(-2px, -2px);
+    }
+    60% {
+      transform: translate(2px, 2px);
+    }
+    80% {
+      transform: translate(2px, -2px);
+    }
+    100% {
+      transform: translate(0);
+    }
   }
 }
