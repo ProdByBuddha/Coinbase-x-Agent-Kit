@@ -5,13 +5,13 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 import { Socket, io } from "socket.io-client";
-import { Settings } from "lucide-react";
+import { Settings, Send, ArrowLeft } from "lucide-react";
 import ModeSelector from "@/components/chat/mode-selector";
 import MessageList from "@/components/chat/message-list";
 import WalletInfo from "@/components/chat/wallet-info";
 import NetworkStatus from "@/components/chat/network-status";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
-import { Send } from "lucide-react";
+import { Link } from "wouter";
 
 type Message = {
   id: string;
@@ -175,10 +175,18 @@ export default function Chat() {
       <div className="flex flex-col w-full max-w-5xl mx-auto p-4">
         <div className="flex justify-between items-center mb-4">
           <div className="flex items-center gap-4">
+            <Link href="/dashboard">
+              <Button variant="outline" size="icon" className="neon-border">
+                <ArrowLeft className="h-4 w-4" />
+              </Button>
+            </Link>
+            <h1 className="cyberpunk-text text-xl font-bold">
+              {chatInstance?.name || "Chat"}
+            </h1>
             <ModeSelector mode={mode} onChange={handleModeChange} />
             <Sheet>
               <SheetTrigger asChild>
-                <Button variant="outline" size="icon">
+                <Button variant="outline" size="icon" className="neon-border">
                   <Settings className="h-4 w-4" />
                 </Button>
               </SheetTrigger>
@@ -196,6 +204,7 @@ export default function Chat() {
                         cdpApiKeyName: e.target.value
                       }))}
                       placeholder="Enter CDP API Key Name"
+                      className="neon-border"
                     />
                   </div>
                   <div className="space-y-2">
@@ -208,9 +217,10 @@ export default function Chat() {
                         cdpApiKeyPrivateKey: e.target.value
                       }))}
                       placeholder="Enter CDP Private Key"
+                      className="neon-border"
                     />
                   </div>
-                  <Button onClick={saveApiKeys} className="w-full">
+                  <Button onClick={saveApiKeys} className="w-full neon-border">
                     Save Configuration
                   </Button>
                 </div>
@@ -222,7 +232,7 @@ export default function Chat() {
 
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-4">
           <div className="md:col-span-3">
-            <ScrollArea className="h-[70vh] rounded-lg border bg-card p-4">
+            <ScrollArea className="h-[70vh] rounded-lg border bg-card p-4 cyberpunk-card">
               <MessageList messages={messages} />
             </ScrollArea>
           </div>
@@ -237,12 +247,12 @@ export default function Chat() {
             onChange={e => setInput(e.target.value)}
             placeholder="Type your message..."
             disabled={!isConnected || mode === "auto" || isLoading}
-            className="flex-1"
+            className="flex-1 neon-border"
           />
           <Button 
             type="submit" 
             disabled={!isConnected || mode === "auto" || isLoading}
-            className="bg-primary hover:bg-primary/90"
+            className="neon-border"
           >
             <Send className="h-4 w-4" />
           </Button>
