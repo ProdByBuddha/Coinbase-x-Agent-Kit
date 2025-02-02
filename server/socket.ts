@@ -26,9 +26,14 @@ export function setupWebSocket(io: Server) {
     let config: any;
 
     try {
-      const result = await initializeAgent();
+      // Pass the chat-specific API keys to the agent initialization
+      const result = await initializeAgent({
+        cdpApiKeyName: query.cdpApiKeyName,
+        cdpApiKeyPrivateKey: query.cdpApiKeyPrivateKey
+      });
       agent = result.agent;
       config = result.config;
+      console.log("Agent initialized with chat-specific configuration");
     } catch (error) {
       console.error("Agent initialization error:", error);
       socket.emit("error", "Failed to initialize agent");

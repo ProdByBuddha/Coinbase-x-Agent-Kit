@@ -88,5 +88,15 @@ export function registerRoutes(app: Express) {
     }
   });
 
+  // Add new route to clear chat history
+  app.delete("/api/messages/:chatId/clear", async (req, res) => {
+    try {
+      const { chatId } = req.params;
+      await db.delete(messages).where(eq(messages.chatId, parseInt(chatId)));
+      res.json({ success: true });
+    } catch (error) {
+      res.status(500).json({ error: "Failed to clear chat history" });
+    }
+  });
   return httpServer;
 }
