@@ -1,6 +1,7 @@
 import { Plus, Pencil, Trash2 } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Link } from "wouter";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import {
@@ -23,9 +24,9 @@ import { Input } from "@/components/ui/input";
 import { useToast } from "@/hooks/use-toast";
 
 type ChatInstance = {
-  id: string;
+  id: number;
   name: string;
-  createdAt: Date;
+  createdAt: string;
   apiKeys?: {
     cdpApiKeyName?: string;
     cdpApiKeyPrivateKey?: string;
@@ -33,61 +34,111 @@ type ChatInstance = {
 };
 
 export default function Dashboard() {
-  const [chatInstances, setChatInstances] = useState<ChatInstance[]>([]);
   const [editingChat, setEditingChat] = useState<ChatInstance | null>(null);
   const [newChatName, setNewChatName] = useState("");
   const { toast } = useToast();
+  const queryClient = useQueryClient();
 
-  useEffect(() => {
-    // Load chat instances from localStorage
-    const savedInstances = localStorage.getItem('chatInstances');
-    if (savedInstances) {
-      setChatInstances(JSON.parse(savedInstances).map((instance: ChatInstance) => ({
-        ...instance,
-        createdAt: new Date(instance.createdAt)
-      })));
+  const { data: chatInstances = [] } = useQuery<ChatInstance[]>({
+    queryKey: ['chats'],
+    queryFn: async () => {
+      const response = await fetch('/api/chats');
+      if (!response.ok) throw new Error('Failed to fetch chats');
+      return response.json();
     }
-  }, []);
+  });
 
-  const createNewChat = () => {
-    const newChat: ChatInstance = {
-      id: Date.now().toString(),
-      name: `Chat ${chatInstances.length + 1}`,
-      createdAt: new Date()
-    };
-    const updatedInstances = [...chatInstances, newChat];
-    setChatInstances(updatedInstances);
-    localStorage.setItem('chatInstances', JSON.stringify(updatedInstances));
-  };
+  const createChatMutation = useMutation({
+    mutationFn: async () => {
+      const response = await fetch('/api/chats', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          name: `Chat ${chatInstances.length + 1}`,
+        }),
+      });
+      if (!response.ok) throw new Error('Failed to create chat');
+      return response.json();
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['chats'] });
+      toast({
+        title: "Chat Created",
+        description: "New chat has been created successfully.",
+      });
+    },
+    onError: () => {
+      toast({
+        title: "Error",
+        description: "Failed to create chat. Please try again.",
+        variant: "destructive",
+      });
+    },
+  });
 
-  const updateChatName = () => {
+  const updateChatMutation = useMutation({
+    mutationFn: async (chat: ChatInstance) => {
+      const response = await fetch(`/api/chats/${chat.id}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          name: newChatName.trim(),
+          apiKeys: chat.apiKeys,
+        }),
+      });
+      if (!response.ok) throw new Error('Failed to update chat');
+      return response.json();
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['chats'] });
+      setEditingChat(null);
+      setNewChatName("");
+      toast({
+        title: "Chat Updated",
+        description: "Chat has been updated successfully.",
+      });
+    },
+    onError: () => {
+      toast({
+        title: "Error",
+        description: "Failed to update chat. Please try again.",
+        variant: "destructive",
+      });
+    },
+  });
+
+  const deleteChatMutation = useMutation({
+    mutationFn: async (chatId: number) => {
+      const response = await fetch(`/api/chats/${chatId}`, {
+        method: 'DELETE',
+      });
+      if (!response.ok) throw new Error('Failed to delete chat');
+      return response.json();
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['chats'] });
+      toast({
+        title: "Chat Deleted",
+        description: "Chat has been deleted successfully.",
+      });
+    },
+    onError: () => {
+      toast({
+        title: "Error",
+        description: "Failed to delete chat. Please try again.",
+        variant: "destructive",
+      });
+    },
+  });
+
+  const handleUpdateChat = () => {
     if (!editingChat || !newChatName.trim()) return;
-
-    const updatedInstances = chatInstances.map(chat => 
-      chat.id === editingChat.id ? { ...chat, name: newChatName.trim() } : chat
-    );
-    setChatInstances(updatedInstances);
-    localStorage.setItem('chatInstances', JSON.stringify(updatedInstances));
-    setEditingChat(null);
-    setNewChatName("");
-
-    toast({
-      title: "Chat Updated",
-      description: "Chat name has been updated successfully.",
-    });
+    updateChatMutation.mutate(editingChat);
   };
 
-  const deleteChat = (chatId: string) => {
+  const handleDeleteChat = (chatId: number) => {
     if (!confirm("Are you sure you want to delete this chat?")) return;
-
-    const updatedInstances = chatInstances.filter(chat => chat.id !== chatId);
-    setChatInstances(updatedInstances);
-    localStorage.setItem('chatInstances', JSON.stringify(updatedInstances));
-
-    toast({
-      title: "Chat Deleted",
-      description: "Chat has been deleted successfully.",
-    });
+    deleteChatMutation.mutate(chatId);
   };
 
   return (
@@ -123,7 +174,11 @@ export default function Dashboard() {
           <div className="mx-auto max-w-6xl space-y-6">
             <div className="flex items-center justify-between">
               <h1 className="cyberpunk-text text-3xl font-bold">Dashboard</h1>
-              <Button onClick={createNewChat} className="neon-border">
+              <Button 
+                onClick={() => createChatMutation.mutate()}
+                className="neon-border"
+                disabled={createChatMutation.isPending}
+              >
                 <Plus className="mr-2 h-4 w-4" />
                 New Chat
               </Button>
@@ -157,8 +212,13 @@ export default function Dashboard() {
                               value={newChatName}
                               onChange={(e) => setNewChatName(e.target.value)}
                               placeholder="Enter new chat name"
+                              className="neon-border"
                             />
-                            <Button onClick={updateChatName} className="w-full">
+                            <Button 
+                              onClick={handleUpdateChat} 
+                              className="w-full neon-border"
+                              disabled={updateChatMutation.isPending}
+                            >
                               Save Changes
                             </Button>
                           </div>
@@ -167,7 +227,8 @@ export default function Dashboard() {
                       <Button
                         variant="outline"
                         size="icon"
-                        onClick={() => deleteChat(chat.id)}
+                        onClick={() => handleDeleteChat(chat.id)}
+                        disabled={deleteChatMutation.isPending}
                       >
                         <Trash2 className="h-4 w-4" />
                       </Button>
@@ -175,7 +236,7 @@ export default function Dashboard() {
                   </CardHeader>
                   <CardContent>
                     <p className="text-sm text-muted-foreground">
-                      Created {chat.createdAt.toLocaleDateString()}
+                      Created {new Date(chat.createdAt).toLocaleDateString()}
                     </p>
                     <p className="mt-2 text-sm">
                       {chat.apiKeys ? "API Keys Configured" : "API Keys Not Configured"}

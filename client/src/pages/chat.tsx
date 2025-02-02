@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 import { Socket, io } from "socket.io-client";
 import { Settings, Send, ArrowLeft } from "lucide-react";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import ModeSelector from "@/components/chat/mode-selector";
 import MessageList from "@/components/chat/message-list";
 import WalletInfo from "@/components/chat/wallet-info";
@@ -21,9 +22,9 @@ type Message = {
 };
 
 type ChatInstance = {
-  id: string;
+  id: number;
   name: string;
-  createdAt: Date;
+  createdAt: string;
   apiKeys?: {
     cdpApiKeyName?: string;
     cdpApiKeyPrivateKey?: string;
@@ -35,35 +36,65 @@ export default function Chat() {
   const chatId = params?.id;
 
   const [socket, setSocket] = useState<Socket | null>(null);
-  const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState("");
   const [mode, setMode] = useState<"chat" | "auto">("chat");
   const [isConnected, setIsConnected] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const [chatInstance, setChatInstance] = useState<ChatInstance | null>(null);
-  const [showSettings, setShowSettings] = useState(false);
   const [apiKeys, setApiKeys] = useState({
     cdpApiKeyName: "",
     cdpApiKeyPrivateKey: "",
   });
 
   const { toast } = useToast();
+  const queryClient = useQueryClient();
+
+  const { data: chatInstance } = useQuery<ChatInstance>({
+    queryKey: ['chat', chatId],
+    queryFn: async () => {
+      const response = await fetch(`/api/chats/${chatId}`);
+      if (!response.ok) throw new Error('Failed to fetch chat');
+      return response.json();
+    },
+    enabled: !!chatId,
+  });
+
+  const { data: messages = [] } = useQuery<Message[]>({
+    queryKey: ['messages', chatId],
+    queryFn: async () => {
+      const response = await fetch(`/api/messages/${chatId}`);
+      if (!response.ok) throw new Error('Failed to fetch messages');
+      return response.json();
+    },
+    enabled: !!chatId,
+  });
+
+  const updateChatMutation = useMutation({
+    mutationFn: async () => {
+      const response = await fetch(`/api/chats/${chatId}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          apiKeys,
+          name: chatInstance?.name,
+        }),
+      });
+      if (!response.ok) throw new Error('Failed to update chat');
+      return response.json();
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['chat', chatId] });
+      toast({
+        title: "API Keys Updated",
+        description: "The chat will reconnect with the new configuration.",
+      });
+    },
+  });
 
   useEffect(() => {
-    if (chatId) {
-      const savedInstances = localStorage.getItem('chatInstances');
-      if (savedInstances) {
-        const instances = JSON.parse(savedInstances);
-        const instance = instances.find((i: ChatInstance) => i.id === chatId);
-        if (instance) {
-          setChatInstance(instance);
-          if (instance.apiKeys) {
-            setApiKeys(instance.apiKeys);
-          }
-        }
-      }
+    if (chatInstance?.apiKeys) {
+      setApiKeys(chatInstance.apiKeys);
     }
-  }, [chatId]);
+  }, [chatInstance]);
 
   useEffect(() => {
     if (!chatId) return;
@@ -94,11 +125,7 @@ export default function Chat() {
     });
 
     newSocket.on("message", (msg: Message) => {
-      const msgWithDate = {
-        ...msg,
-        timestamp: new Date(msg.timestamp)
-      };
-      setMessages(prev => [...prev, msgWithDate]);
+      queryClient.invalidateQueries({ queryKey: ['messages', chatId] });
       setIsLoading(false);
     });
 
@@ -116,21 +143,13 @@ export default function Chat() {
     return () => {
       newSocket.close();
     };
-  }, [chatId, apiKeys, toast]);
+  }, [chatId, apiKeys, toast, queryClient]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!input.trim() || !socket || !isConnected || isLoading) return;
 
     setIsLoading(true);
-    const message: Message = {
-      id: Date.now().toString(),
-      content: input,
-      type: "user",
-      timestamp: new Date(),
-    };
-
-    setMessages(prev => [...prev, message]);
     socket.emit("chat", input);
     setInput("");
   };
@@ -144,30 +163,7 @@ export default function Chat() {
 
   const saveApiKeys = () => {
     if (!chatId) return;
-
-    const savedInstances = localStorage.getItem('chatInstances');
-    if (savedInstances) {
-      const instances = JSON.parse(savedInstances);
-      const updatedInstances = instances.map((instance: ChatInstance) => {
-        if (instance.id === chatId) {
-          return {
-            ...instance,
-            apiKeys,
-          };
-        }
-        return instance;
-      });
-      localStorage.setItem('chatInstances', JSON.stringify(updatedInstances));
-    }
-
-    if (socket) {
-      socket.disconnect();
-    }
-
-    toast({
-      title: "API Keys Updated",
-      description: "The chat will reconnect with the new configuration.",
-    });
+    updateChatMutation.mutate();
   };
 
   return (
@@ -220,7 +216,11 @@ export default function Chat() {
                       className="neon-border"
                     />
                   </div>
-                  <Button onClick={saveApiKeys} className="w-full neon-border">
+                  <Button 
+                    onClick={saveApiKeys} 
+                    className="w-full neon-border"
+                    disabled={updateChatMutation.isPending}
+                  >
                     Save Configuration
                   </Button>
                 </div>
