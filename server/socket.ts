@@ -4,9 +4,23 @@ import { db } from "@db";
 import { messages } from "@db/schema";
 import { HumanMessage } from "@langchain/core/messages";
 
+type SocketQuery = {
+  chatId: string;
+  cdpApiKeyName?: string;
+  cdpApiKeyPrivateKey?: string;
+};
+
 export function setupWebSocket(io: Server) {
   io.on("connection", async (socket) => {
     console.log("Client connected");
+    const query = socket.handshake.query as SocketQuery;
+    const chatId = parseInt(query.chatId);
+
+    if (!chatId) {
+      socket.emit("error", "Chat ID is required");
+      return;
+    }
+
     let mode: "chat" | "auto" = "chat";
     let agent: any;
     let config: any;
@@ -29,28 +43,31 @@ export function setupWebSocket(io: Server) {
         );
 
         // Save user message first
-        await db.insert(messages).values([{
+        await db.insert(messages).values({
+          chatId,
           content: message,
           type: "user",
           timestamp: new Date()
-        }]);
+        });
 
         for await (const chunk of stream) {
           if ("agent" in chunk) {
             const msg = {
+              chatId,
               content: chunk.agent.messages[0].content,
               type: "agent" as const,
               timestamp: new Date()
             };
-            await db.insert(messages).values([msg]);
+            await db.insert(messages).values(msg);
             socket.emit("message", { ...msg, id: Date.now().toString() });
           } else if ("tools" in chunk) {
             const msg = {
+              chatId,
               content: chunk.tools.messages[0].content,
               type: "tool" as const,
               timestamp: new Date()
             };
-            await db.insert(messages).values([msg]);
+            await db.insert(messages).values(msg);
             socket.emit("message", { ...msg, id: Date.now().toString() });
           }
         }
