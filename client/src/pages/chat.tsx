@@ -1,13 +1,16 @@
 import { useEffect, useState } from "react";
+import { useRoute } from "wouter";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 import { Socket, io } from "socket.io-client";
+import { Settings } from "lucide-react";
 import ModeSelector from "@/components/chat/mode-selector";
 import MessageList from "@/components/chat/message-list";
 import WalletInfo from "@/components/chat/wallet-info";
 import NetworkStatus from "@/components/chat/network-status";
+import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 import { Send } from "lucide-react";
 
 type Message = {
@@ -17,18 +20,60 @@ type Message = {
   timestamp: string | Date;
 };
 
+type ChatInstance = {
+  id: string;
+  name: string;
+  createdAt: Date;
+  apiKeys?: {
+    cdpApiKeyName?: string;
+    cdpApiKeyPrivateKey?: string;
+  };
+};
+
 export default function Chat() {
+  const [, params] = useRoute("/chat/:id");
+  const chatId = params?.id;
+
   const [socket, setSocket] = useState<Socket | null>(null);
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState("");
   const [mode, setMode] = useState<"chat" | "auto">("chat");
   const [isConnected, setIsConnected] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [chatInstance, setChatInstance] = useState<ChatInstance | null>(null);
+  const [showSettings, setShowSettings] = useState(false);
+  const [apiKeys, setApiKeys] = useState({
+    cdpApiKeyName: "",
+    cdpApiKeyPrivateKey: "",
+  });
+
   const { toast } = useToast();
 
   useEffect(() => {
+    if (chatId) {
+      const savedInstances = localStorage.getItem('chatInstances');
+      if (savedInstances) {
+        const instances = JSON.parse(savedInstances);
+        const instance = instances.find((i: ChatInstance) => i.id === chatId);
+        if (instance) {
+          setChatInstance(instance);
+          if (instance.apiKeys) {
+            setApiKeys(instance.apiKeys);
+          }
+        }
+      }
+    }
+  }, [chatId]);
+
+  useEffect(() => {
+    if (!chatId) return;
+
     const newSocket = io(window.location.origin, {
       path: "/socket.io",
+      query: {
+        chatId,
+        ...apiKeys,
+      },
     });
 
     newSocket.on("connect", () => {
@@ -49,13 +94,11 @@ export default function Chat() {
     });
 
     newSocket.on("message", (msg: Message) => {
-      // Ensure timestamp is a Date object
       const msgWithDate = {
         ...msg,
         timestamp: new Date(msg.timestamp)
       };
       setMessages(prev => [...prev, msgWithDate]);
-      // Reset loading state after receiving a message
       setIsLoading(false);
     });
 
@@ -73,7 +116,7 @@ export default function Chat() {
     return () => {
       newSocket.close();
     };
-  }, [toast]);
+  }, [chatId, apiKeys, toast]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -99,11 +142,81 @@ export default function Chat() {
     }
   };
 
+  const saveApiKeys = () => {
+    if (!chatId) return;
+
+    const savedInstances = localStorage.getItem('chatInstances');
+    if (savedInstances) {
+      const instances = JSON.parse(savedInstances);
+      const updatedInstances = instances.map((instance: ChatInstance) => {
+        if (instance.id === chatId) {
+          return {
+            ...instance,
+            apiKeys,
+          };
+        }
+        return instance;
+      });
+      localStorage.setItem('chatInstances', JSON.stringify(updatedInstances));
+    }
+
+    if (socket) {
+      socket.disconnect();
+    }
+
+    toast({
+      title: "API Keys Updated",
+      description: "The chat will reconnect with the new configuration.",
+    });
+  };
+
   return (
     <div className="flex h-screen bg-background">
       <div className="flex flex-col w-full max-w-5xl mx-auto p-4">
         <div className="flex justify-between items-center mb-4">
-          <ModeSelector mode={mode} onChange={handleModeChange} />
+          <div className="flex items-center gap-4">
+            <ModeSelector mode={mode} onChange={handleModeChange} />
+            <Sheet>
+              <SheetTrigger asChild>
+                <Button variant="outline" size="icon">
+                  <Settings className="h-4 w-4" />
+                </Button>
+              </SheetTrigger>
+              <SheetContent>
+                <SheetHeader>
+                  <SheetTitle>Agent Configuration</SheetTitle>
+                </SheetHeader>
+                <div className="space-y-4 py-4">
+                  <div className="space-y-2">
+                    <label className="text-sm font-medium">CDP API Key Name</label>
+                    <Input
+                      value={apiKeys.cdpApiKeyName}
+                      onChange={(e) => setApiKeys(prev => ({
+                        ...prev,
+                        cdpApiKeyName: e.target.value
+                      }))}
+                      placeholder="Enter CDP API Key Name"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <label className="text-sm font-medium">CDP Private Key</label>
+                    <Input
+                      type="password"
+                      value={apiKeys.cdpApiKeyPrivateKey}
+                      onChange={(e) => setApiKeys(prev => ({
+                        ...prev,
+                        cdpApiKeyPrivateKey: e.target.value
+                      }))}
+                      placeholder="Enter CDP Private Key"
+                    />
+                  </div>
+                  <Button onClick={saveApiKeys} className="w-full">
+                    Save Configuration
+                  </Button>
+                </div>
+              </SheetContent>
+            </Sheet>
+          </div>
           <NetworkStatus isConnected={isConnected} />
         </div>
 
