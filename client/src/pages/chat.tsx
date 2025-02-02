@@ -5,7 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 import { Socket, io } from "socket.io-client";
-import { Settings, Send, ArrowLeft, Trash2 } from "lucide-react";
+import { Settings, Send, ArrowLeft } from "lucide-react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import ModeSelector from "@/components/chat/mode-selector";
 import MessageList from "@/components/chat/message-list";
@@ -90,23 +90,6 @@ export default function Chat() {
     },
   });
 
-  const clearHistoryMutation = useMutation({
-    mutationFn: async () => {
-      const response = await fetch(`/api/messages/${chatId}/clear`, {
-        method: 'DELETE',
-      });
-      if (!response.ok) throw new Error('Failed to clear chat history');
-      return response.json();
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['messages', chatId] });
-      toast({
-        title: "Chat History Cleared",
-        description: "All messages have been deleted.",
-      });
-    },
-  });
-
   useEffect(() => {
     if (chatInstance?.apiKeys) {
       setApiKeys(chatInstance.apiKeys);
@@ -182,11 +165,6 @@ export default function Chat() {
     if (!chatId) return;
     updateChatMutation.mutate();
   };
-    
-  const handleClearHistory = () => {
-    if (!confirm("Are you sure you want to clear the chat history? This cannot be undone.")) return;
-    clearHistoryMutation.mutate();
-  };
 
   return (
     <div className="flex h-screen bg-background">
@@ -202,15 +180,6 @@ export default function Chat() {
               {chatInstance?.name || "Chat"}
             </h1>
             <ModeSelector mode={mode} onChange={handleModeChange} />
-            <Button 
-              variant="outline" 
-              size="icon" 
-              className="neon-border"
-              onClick={handleClearHistory}
-              disabled={clearHistoryMutation.isPending}
-            >
-              <Trash2 className="h-4 w-4" />
-            </Button>
             <Sheet>
               <SheetTrigger asChild>
                 <Button variant="outline" size="icon" className="neon-border">
