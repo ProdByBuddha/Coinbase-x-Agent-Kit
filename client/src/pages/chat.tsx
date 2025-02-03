@@ -158,6 +158,11 @@ export default function Chat() {
     setMode(newMode);
     if (socket) {
       socket.emit("mode", newMode);
+      if (newMode === "auto") {
+        // Send initial auto mode trigger
+        socket.emit("chat", "Start autonomous mode operations");
+        setIsLoading(true);
+      }
     }
   };
 
