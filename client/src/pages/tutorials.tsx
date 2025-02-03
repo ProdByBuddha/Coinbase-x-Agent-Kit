@@ -14,77 +14,77 @@ export default function Tutorials() {
         </Button>
       </Link>
       <h1 className="text-4xl font-bold tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-primary to-primary-foreground">
-        Direct-to-Consumer Music Distribution Guide
+        Physical Art Sales with Web3
       </h1>
 
       <Card>
         <CardHeader>
-          <CardTitle>Setting Up Your Artist Profile</CardTitle>
-          <CardDescription>Create your digital storefront</CardDescription>
+          <CardTitle>Setting Up Your Art Gallery</CardTitle>
+          <CardDescription>Create your digital storefront for physical art</CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
-          <p>Essential steps to establish your digital presence:</p>
+          <p>Essential steps to establish your Web3 art presence:</p>
           <div className="space-y-2">
-            <p>1. Profile optimization</p>
-            <p>2. Music metadata management</p>
-            <p>3. Smart contract deployment for royalties</p>
+            <p>1. Digital catalog creation</p>
+            <p>2. Artwork metadata and authentication</p>
+            <p>3. Smart contract setup for physical art sales</p>
           </div>
           <div className="bg-muted p-4 rounded-md">
-            <code>Query: "Help me set up my artist profile with optimized metadata for discovery"</code>
+            <code>Query: "Help me create a digital catalog for my physical artworks with authentication certificates"</code>
           </div>
         </CardContent>
       </Card>
 
       <Card>
         <CardHeader>
-          <CardTitle>Direct Sales Strategy</CardTitle>
-          <CardDescription>Maximize your earnings through direct fan engagement</CardDescription>
+          <CardTitle>Physical Art Sales Strategy</CardTitle>
+          <CardDescription>Connect digital tokens to physical artworks</CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
           <p>Learn how to:</p>
           <div className="space-y-2">
-            <p>• Set up token-gated content</p>
-            <p>• Create exclusive fan experiences</p>
-            <p>• Manage digital asset distribution</p>
+            <p>• Create NFT certificates of authenticity</p>
+            <p>• Set up secure shipping and handling</p>
+            <p>• Manage physical inventory with blockchain</p>
           </div>
           <div className="bg-muted p-4 rounded-md">
-            <code>Query: "Show me how to create token-gated exclusive content for my superfans"</code>
+            <code>Query: "Show me how to create authentication certificates for my physical artworks"</code>
           </div>
         </CardContent>
       </Card>
 
       <Card>
         <CardHeader>
-          <CardTitle>Revenue Analytics</CardTitle>
-          <CardDescription>Track and optimize your earnings</CardDescription>
+          <CardTitle>Gallery Analytics</CardTitle>
+          <CardDescription>Track sales and engagement</CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
-          <p>Monitor your success:</p>
+          <p>Monitor your art business:</p>
           <div className="space-y-2">
-            <p>• Real-time sales tracking</p>
-            <p>• Fan engagement metrics</p>
-            <p>• Royalty distribution analysis</p>
+            <p>• Physical artwork inventory tracking</p>
+            <p>• Sales performance analytics</p>
+            <p>• Collector engagement metrics</p>
           </div>
           <div className="bg-muted p-4 rounded-md">
-            <code>Query: "Generate a report of my music sales and engagement metrics for the last month"</code>
+            <code>Query: "Generate a report of my artwork sales and inventory status"</code>
           </div>
         </CardContent>
       </Card>
 
       <Card>
         <CardHeader>
-          <CardTitle>Fan Community Building</CardTitle>
-          <CardDescription>Create lasting connections with your audience</CardDescription>
+          <CardTitle>Collector Community</CardTitle>
+          <CardDescription>Build relationships with art collectors</CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
-          <p>Build your community:</p>
+          <p>Engage with collectors:</p>
           <div className="space-y-2">
-            <p>• Exclusive content strategies</p>
-            <p>• Direct fan communication</p>
-            <p>• Community reward systems</p>
+            <p>• Private viewing experiences</p>
+            <p>• Early access to new works</p>
+            <p>• Collector rewards program</p>
           </div>
           <div className="bg-muted p-4 rounded-md">
-            <code>Query: "Help me design a token-based fan rewards program for my community"</code>
+            <code>Query: "Help me set up exclusive previews for my top collectors"</code>
           </div>
         </CardContent>
       </Card>

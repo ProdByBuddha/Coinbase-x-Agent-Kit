@@ -76,8 +76,8 @@ export default function Examples() {
 
       <Card>
         <CardHeader>
-          <CardTitle>NFT Collection Management</CardTitle>
-          <CardDescription>Track and manage your digital art portfolio</CardDescription>
+          <CardTitle>Physical Art Management</CardTitle>
+          <CardDescription>Track and manage your physical art inventory</CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
           <p>Monitor your NFT collection and track performance:</p>
