@@ -1,3 +1,4 @@
+
 CREATE TABLE IF NOT EXISTS "wallets" (
 	"id" serial PRIMARY KEY NOT NULL,
 	"address" text NOT NULL,
