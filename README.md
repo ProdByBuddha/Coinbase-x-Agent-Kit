@@ -41,9 +41,23 @@ A full-stack web application template featuring a React frontend with TypeScript
    - Wait for the database to be provisioned
    - The DATABASE_URL environment variable will be automatically added to your Repl
 
-3. Set up environment variables in Replit Secrets:
-   - Session secret
-   - Other API keys as needed
+3. Set up required API keys in Replit Secrets:
+
+   a) Get OpenAI API Key:
+   - Go to https://platform.openai.com/api-keys
+   - Click "Create new secret key"
+   - Copy the generated key
+   - In Replit, click "Tools" > "Secrets"
+   - Add new secret with key: `OPENAI_API_KEY` and paste your OpenAI key as the value
+
+   b) Get Coinbase API Keys:
+   - Go to https://cloud.coinbase.com
+   - Navigate to "API Keys" section
+   - Create a new API key
+   - Copy both the API Key Name and Private Key
+   - In Replit Secrets, add:
+     - `CDP_API_KEY_NAME`: Your API Key Name
+     - `CDP_API_KEY_PRIVATE_KEY`: Your Private Key
 
 4. Run database migrations:
    ```bash
