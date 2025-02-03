@@ -31,3 +31,21 @@ export const insertMessageSchema = createInsertSchema(messages);
 export const selectMessageSchema = createSelectSchema(messages);
 export type InsertMessage = typeof messages.$inferInsert;
 export type SelectMessage = typeof messages.$inferSelect;
+
+// Wallet tables
+export const wallets = pgTable("wallets", {
+  id: serial("id").primaryKey(),
+  address: text("address").notNull(),
+  network: text("network").notNull(),
+  balanceETH: text("balance_eth").notNull(),
+  balanceWEI: text("balance_wei").notNull(),
+  status: text("status").notNull(),
+  lastTransaction: text("last_transaction"),
+  updatedAt: timestamp("updated_at").notNull().defaultNow()
+});
+
+// Wallet schemas
+export const insertWalletSchema = createInsertSchema(wallets);
+export const selectWalletSchema = createSelectSchema(wallets);
+export type InsertWallet = typeof wallets.$inferInsert;
+export type SelectWallet = typeof wallets.$inferSelect;

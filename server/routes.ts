@@ -95,15 +95,40 @@ export function registerRoutes(app: Express) {
       const wallet = cdp.getWallet();
       const balance = await wallet.getBalance();
       
-      res.json({
+      const walletData = {
         network: process.env.NETWORK_ID || "base-sepolia",
         address: wallet.address,
         balanceETH: cdp.utils.fromWei(balance, 'ether'),
         balanceWEI: balance.toString(),
         status: wallet.isConnected() ? 'active' : 'inactive',
         lastTransaction: (await wallet.getLastTransaction())?.hash || null
+      };
+
+      // Update or insert wallet data in database
+      await db.insert(wallets)
+        .values(walletData)
+        .onConflictDoUpdate({
+          target: wallets.address,
+          set: walletData
+        });
+
+      // Return latest data from database
+      const result = await db.query.wallets.findFirst({
+        where: eq(wallets.address, wallet.address)
       });
+
+      res.json(result);
     } catch (error) {
+      // Try to fetch from database even if CDP fails
+      try {
+        const result = await db.query.wallets.findFirst();
+        if (result) {
+          res.json(result);
+          return;
+        }
+      } catch (dbError) {
+        console.error("Database error:", dbError);
+      }
       res.status(500).json({ error: "Failed to fetch wallet info" });
     }
   });
