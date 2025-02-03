@@ -71,10 +71,10 @@ export default function Examples() {
 
       <h2 className="text-2xl font-bold mt-8 mb-4">For Artists & Creators</h2>
       <div className="flex gap-4 mb-4">
-        <Link href="/tutorials">
+        <Link href="/music-tutorials">
           <Button>View Music Distribution Tutorials</Button>
         </Link>
-        <Link href="/tutorials">
+        <Link href="/physical-art-tutorials">
           <Button>View Physical Art Tutorials</Button>
         </Link>
       </div>

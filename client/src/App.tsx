@@ -7,7 +7,8 @@ import Chat from "@/pages/chat";
 import Dashboard from "@/pages/dashboard";
 import Help from "@/pages/help";
 import Examples from "@/pages/examples";
-import Tutorials from "@/pages/tutorials";
+import MusicTutorials from "./pages/music-tutorials";
+import PhysicalArtTutorials from "./pages/physical-art-tutorials";
 import NotFound from "@/pages/not-found";
 
 function Router() {
@@ -17,7 +18,8 @@ function Router() {
       <Route path="/dashboard" component={Dashboard} />
       <Route path="/help" component={Help} />
       <Route path="/examples" component={Examples} />
-      <Route path="/tutorials" component={Tutorials} />
+      <Route path="/music-tutorials" component={MusicTutorials} />
+      <Route path="/physical-art-tutorials" component={PhysicalArtTutorials} />
       <Route path="/chat/:id" component={Chat} />
       <Route component={NotFound} />
     </Switch>
