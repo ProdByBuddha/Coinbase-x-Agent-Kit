@@ -162,6 +162,13 @@ export default function Dashboard() {
                   </SidebarMenuButton>
                 </Link>
               </SidebarMenuItem>
+              <SidebarMenuItem>
+                <Link href="/help">
+                  <SidebarMenuButton className="w-full justify-start">
+                    Help Guide
+                  </SidebarMenuButton>
+                </Link>
+              </SidebarMenuItem>
               {chatInstances.map((chat) => (
                 <SidebarMenuItem key={chat.id}>
                   <Link href={`/chat/${chat.id}`}>
