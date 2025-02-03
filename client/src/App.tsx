@@ -6,6 +6,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import Chat from "@/pages/chat";
 import Dashboard from "@/pages/dashboard";
 import Help from "@/pages/help";
+import Examples from "@/pages/examples";
 import NotFound from "@/pages/not-found";
 
 function Router() {
@@ -14,6 +15,7 @@ function Router() {
       <Route path="/" component={Dashboard} />
       <Route path="/dashboard" component={Dashboard} />
       <Route path="/help" component={Help} />
+      <Route path="/examples" component={Examples} />
       <Route path="/chat/:id" component={Chat} />
       <Route component={NotFound} />
     </Switch>

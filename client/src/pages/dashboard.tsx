@@ -180,6 +180,13 @@ export default function Dashboard() {
                   </SidebarMenuButton>
                 </Link>
               </SidebarMenuItem>
+              <SidebarMenuItem>
+                <Link href="/examples">
+                  <SidebarMenuButton className="w-full justify-start">
+                    Examples
+                  </SidebarMenuButton>
+                </Link>
+              </SidebarMenuItem>
             </SidebarMenu>
           </SidebarContent>
         </Sidebar>
