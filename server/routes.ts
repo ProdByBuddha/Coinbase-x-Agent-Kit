@@ -91,9 +91,17 @@ export function registerRoutes(app: Express) {
 
   app.get("/api/wallet", async (req, res) => {
     try {
+      const cdp = await import("@coinbase/cdp");
+      const wallet = cdp.getWallet();
+      const balance = await wallet.getBalance();
+      
       res.json({
         network: process.env.NETWORK_ID || "base-sepolia",
-        address: "0x..." // Get from CDP wallet provider
+        address: wallet.address,
+        balanceETH: cdp.utils.fromWei(balance, 'ether'),
+        balanceWEI: balance.toString(),
+        status: wallet.isConnected() ? 'active' : 'inactive',
+        lastTransaction: (await wallet.getLastTransaction())?.hash || null
       });
     } catch (error) {
       res.status(500).json({ error: "Failed to fetch wallet info" });
