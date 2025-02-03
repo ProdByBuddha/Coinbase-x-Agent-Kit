@@ -59,7 +59,12 @@ A full-stack web application template featuring a React frontend with TypeScript
      - `CDP_API_KEY_NAME`: Your API Key Name (organizations/...)
      - `CDP_API_KEY_PRIVATE_KEY`: Your Private Key (yes...that long ---BEGIN/END EC PRIVATE KEY....paste the ENTIRE value)
 
-4. Run database migrations:
+4. Create an empty wallet data file:
+   ```bash
+   touch wallet_data.txt
+   ```
+
+5. Run database migrations:
    ```bash
    npx drizzle-kit push
    ```
