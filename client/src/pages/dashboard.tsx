@@ -154,24 +154,16 @@ export default function Dashboard() {
             <h2 className="cyberpunk-text text-lg font-bold bg-clip-text text-transparent bg-gradient-to-r from-primary to-primary-foreground">CDP AgentKit</h2>
           </SidebarHeader>
           <SidebarContent>
-            <SidebarMenu>
-              <SidebarMenuItem>
-                <Link href="/dashboard">
-                  <SidebarMenuButton className="w-full justify-start font-bold">
-                    Dashboard
-                  </SidebarMenuButton>
-                </Link>
-              </SidebarMenuItem>
-              <div className="mt-auto">
+            <SidebarMenu className="flex flex-col h-full">
+              <div className="flex-1">
                 <SidebarMenuItem>
-                  <Link href="/help">
-                    <SidebarMenuButton className="w-full justify-start">
-                      Help Guide
+                  <Link href="/dashboard">
+                    <SidebarMenuButton className="w-full justify-start font-bold">
+                      Dashboard
                     </SidebarMenuButton>
                   </Link>
                 </SidebarMenuItem>
-              </div>
-              {chatInstances.map((chat) => (
+                {chatInstances.map((chat) => (
                 <SidebarMenuItem key={chat.id}>
                   <Link href={`/chat/${chat.id}`}>
                     <SidebarMenuButton className="w-full justify-start">
@@ -180,6 +172,14 @@ export default function Dashboard() {
                   </Link>
                 </SidebarMenuItem>
               ))}
+              </div>
+              <SidebarMenuItem>
+                <Link href="/help">
+                  <SidebarMenuButton className="w-full justify-start">
+                    Help Guide
+                  </SidebarMenuButton>
+                </Link>
+              </SidebarMenuItem>
             </SidebarMenu>
           </SidebarContent>
         </Sidebar>
