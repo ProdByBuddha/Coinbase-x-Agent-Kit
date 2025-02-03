@@ -68,6 +68,47 @@ export default function Examples() {
           </div>
         </CardContent>
       </Card>
+
+      <h2 className="text-2xl font-bold mt-8 mb-4">For Artists & Creators</h2>
+
+      <Card>
+        <CardHeader>
+          <CardTitle>NFT Collection Management</CardTitle>
+          <CardDescription>Track and manage your digital art portfolio</CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <p>Monitor your NFT collection and track performance:</p>
+          <div className="bg-muted p-4 rounded-md">
+            <code>Query: "Show me the floor price trends for my NFT collections and suggest optimal listing prices"</code>
+          </div>
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardHeader>
+          <CardTitle>Royalty Tracking</CardTitle>
+          <CardDescription>Monitor creator earnings and royalties</CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <p>Track your earnings across different platforms:</p>
+          <div className="bg-muted p-4 rounded-md">
+            <code>Query: "Calculate my total royalty earnings from secondary sales across all marketplaces"</code>
+          </div>
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardHeader>
+          <CardTitle>Community Engagement</CardTitle>
+          <CardDescription>Analyze collector behavior and engagement</CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <p>Get insights about your collector community:</p>
+          <div className="bg-muted p-4 rounded-md">
+            <code>Query: "Show me engagement metrics for my NFT holders and identify top collectors"</code>
+          </div>
+        </CardContent>
+      </Card>
     </div>
   );
 }
