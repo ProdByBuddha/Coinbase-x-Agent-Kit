@@ -55,13 +55,18 @@ export function registerRoutes(app: Express) {
   app.delete("/api/chats/:id", async (req, res) => {
     try {
       const { id } = req.params;
+      console.log(`Attempting to delete chat with ID: ${id}`);
       const deleteResult = await db.delete(chats).where(eq(chats.id, parseInt(id)));
+      console.log('Delete result:', deleteResult);
       if (deleteResult) {
+        console.log(`Successfully deleted chat ${id}`);
         res.json({ success: true });
       } else {
+        console.log(`Chat ${id} not found`);
         res.status(404).json({ error: "Chat not found" });
       }
     } catch (error) {
+      console.error('Error deleting chat:', error);
       res.status(500).json({ error: "Failed to delete chat" });
     }
   });

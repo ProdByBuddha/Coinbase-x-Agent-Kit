@@ -138,7 +138,12 @@ export default function Dashboard() {
 
   const handleDeleteChat = (chatId: number) => {
     if (!confirm("Are you sure you want to delete this chat?")) return;
-    deleteChatMutation.mutate(chatId);
+    console.log(`Initiating delete for chat ${chatId}`);
+    deleteChatMutation.mutate(chatId, {
+      onError: (error) => {
+        console.error('Delete mutation error:', error);
+      }
+    });
   };
 
   return (
