@@ -70,6 +70,9 @@ export default function Examples() {
       </Card>
 
       <h2 className="text-2xl font-bold mt-8 mb-4">For Artists & Creators</h2>
+      <Link href="/tutorials">
+        <Button className="mb-4">View Music Distribution Tutorials</Button>
+      </Link>
 
       <Card>
         <CardHeader>
