@@ -1,9 +1,10 @@
-import { Plus, Pencil, Trash2 } from "lucide-react";
+
+import { Plus, Pencil, Trash2, Info } from "lucide-react";
 import { useState } from "react";
 import { Link } from "wouter";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
-import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
+import { Card, CardHeader, CardTitle, CardContent, CardDescription } from "@/components/ui/card";
 import {
   SidebarProvider,
   Sidebar,
@@ -18,6 +19,7 @@ import {
   DialogContent,
   DialogHeader,
   DialogTitle,
+  DialogDescription,
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
@@ -138,20 +140,15 @@ export default function Dashboard() {
 
   const handleDeleteChat = (chatId: number) => {
     if (!confirm("Are you sure you want to delete this chat?")) return;
-    console.log(`Initiating delete for chat ${chatId}`);
-    deleteChatMutation.mutate(chatId, {
-      onError: (error) => {
-        console.error('Delete mutation error:', error);
-      }
-    });
+    deleteChatMutation.mutate(chatId);
   };
 
   return (
     <SidebarProvider defaultOpen>
-      <div className="flex h-screen bg-background">
+      <div className="flex h-screen bg-gradient-to-br from-background to-background/95">
         <Sidebar>
           <SidebarHeader className="border-b border-border/50 p-4">
-            <h2 className="cyberpunk-text text-lg font-bold">CDP AgentKit</h2>
+            <h2 className="cyberpunk-text text-lg font-bold bg-clip-text text-transparent bg-gradient-to-r from-primary to-primary-foreground">CDP AgentKit</h2>
           </SidebarHeader>
           <SidebarContent>
             <SidebarMenu>
@@ -175,31 +172,46 @@ export default function Dashboard() {
           </SidebarContent>
         </Sidebar>
 
-        <main className="flex-1 overflow-auto p-6">
-          <div className="mx-auto max-w-6xl space-y-6">
-            <div className="flex items-center justify-between">
-              <h1 className="cyberpunk-text text-3xl font-bold">Dashboard</h1>
+        <main className="flex-1 overflow-auto">
+          <div className="mx-auto max-w-7xl p-6 space-y-8">
+            <div className="flex flex-col space-y-4 md:flex-row md:items-center md:justify-between md:space-y-0">
+              <div>
+                <h1 className="text-4xl font-bold tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-primary to-primary-foreground">
+                  Welcome to CDP AgentKit
+                </h1>
+                <p className="mt-2 text-muted-foreground">
+                  Manage your chat instances and configurations from one central dashboard.
+                </p>
+              </div>
               <Button 
                 onClick={() => createChatMutation.mutate()}
-                className="neon-border"
+                className="relative overflow-hidden group hover:shadow-lg transition-all duration-300"
+                size="lg"
                 disabled={createChatMutation.isPending}
               >
                 <Plus className="mr-2 h-4 w-4" />
-                New Chat
+                Create New Chat
+                <div className="absolute inset-0 bg-gradient-to-r from-primary/20 to-primary-foreground/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
               </Button>
             </div>
 
             <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
               {chatInstances.map((chat) => (
-                <Card key={chat.id} className="cyberpunk-card group">
+                <Card key={chat.id} className="group hover:shadow-lg transition-all duration-300 border-border/50 backdrop-blur-sm bg-background/95">
                   <CardHeader className="flex flex-row items-center justify-between space-y-0">
-                    <CardTitle className="cyberpunk-text">{chat.name}</CardTitle>
-                    <div className="flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                    <div>
+                      <CardTitle className="text-xl font-semibold">{chat.name}</CardTitle>
+                      <CardDescription>
+                        Created {new Date(chat.createdAt).toLocaleDateString()}
+                      </CardDescription>
+                    </div>
+                    <div className="flex gap-2">
                       <Dialog>
                         <DialogTrigger asChild>
                           <Button 
                             variant="outline" 
                             size="icon"
+                            className="hover:border-primary/50"
                             onClick={() => {
                               setEditingChat(chat);
                               setNewChatName(chat.name);
@@ -210,18 +222,21 @@ export default function Dashboard() {
                         </DialogTrigger>
                         <DialogContent>
                           <DialogHeader>
-                            <DialogTitle>Edit Chat Name</DialogTitle>
+                            <DialogTitle>Edit Chat Settings</DialogTitle>
+                            <DialogDescription>
+                              Update the name and configuration for this chat instance.
+                            </DialogDescription>
                           </DialogHeader>
                           <div className="space-y-4 pt-4">
                             <Input
                               value={newChatName}
                               onChange={(e) => setNewChatName(e.target.value)}
                               placeholder="Enter new chat name"
-                              className="neon-border"
+                              className="border-border/50 focus:border-primary/50"
                             />
                             <Button 
                               onClick={handleUpdateChat} 
-                              className="w-full neon-border"
+                              className="w-full"
                               disabled={updateChatMutation.isPending}
                             >
                               Save Changes
@@ -232,6 +247,7 @@ export default function Dashboard() {
                       <Button
                         variant="outline"
                         size="icon"
+                        className="hover:border-destructive/50 hover:text-destructive"
                         onClick={() => handleDeleteChat(chat.id)}
                         disabled={deleteChatMutation.isPending}
                       >
@@ -240,12 +256,14 @@ export default function Dashboard() {
                     </div>
                   </CardHeader>
                   <CardContent>
-                    <p className="text-sm text-muted-foreground">
-                      Created {new Date(chat.createdAt).toLocaleDateString()}
-                    </p>
-                    <p className="mt-2 text-sm">
-                      {chat.apiKeys ? "API Keys Configured" : "API Keys Not Configured"}
-                    </p>
+                    <div className="flex items-center text-sm text-muted-foreground">
+                      <Info className="h-4 w-4 mr-2" />
+                      {chat.apiKeys ? (
+                        <span className="text-success">API Keys Configured</span>
+                      ) : (
+                        <span className="text-warning">API Keys Not Configured</span>
+                      )}
+                    </div>
                   </CardContent>
                 </Card>
               ))}
