@@ -56,8 +56,8 @@ A full-stack web application template featuring a React frontend with TypeScript
    - Create a new API key
    - Copy both the API Key Name and Private Key
    - In Replit Secrets, add:
-     - `CDP_API_KEY_NAME`: Your API Key Name
-     - `CDP_API_KEY_PRIVATE_KEY`: Your Private Key
+     - `CDP_API_KEY_NAME`: Your API Key Name (organizations/...)
+     - `CDP_API_KEY_PRIVATE_KEY`: Your Private Key (yes...that long ---BEGIN/END EC PRIVATE KEY....paste the ENTIRE value)
 
 4. Run database migrations:
    ```bash
