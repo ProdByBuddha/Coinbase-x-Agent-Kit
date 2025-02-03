@@ -47,7 +47,7 @@ A full-stack web application template featuring a React frontend with TypeScript
 
 4. Run database migrations:
    ```bash
-   npx drizzle-kit push:pg
+   npx drizzle-kit push
    ```
 
 ## Project Structure
