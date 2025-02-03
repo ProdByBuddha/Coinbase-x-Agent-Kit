@@ -33,11 +33,22 @@ A full-stack web application template featuring a React frontend with TypeScript
 ## Quick Start
 
 1. Fork this project on Replit
-2. The environment will be automatically set up
-3. Set up your environment variables in Replit Secrets:
-   - Database configuration
+
+2. Set up the PostgreSQL database:
+   - Click the "Tools" button in the left sidebar
+   - Select "Database"
+   - Click "Create a database" 
+   - Wait for the database to be provisioned
+   - The DATABASE_URL environment variable will be automatically added to your Repl
+
+3. Set up environment variables in Replit Secrets:
    - Session secret
    - Other API keys as needed
+
+4. Run database migrations:
+   ```bash
+   npx drizzle-kit push:pg
+   ```
 
 ## Project Structure
 
