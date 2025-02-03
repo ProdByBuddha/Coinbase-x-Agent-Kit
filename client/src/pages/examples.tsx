@@ -70,9 +70,14 @@ export default function Examples() {
       </Card>
 
       <h2 className="text-2xl font-bold mt-8 mb-4">For Artists & Creators</h2>
-      <Link href="/tutorials">
-        <Button className="mb-4">View Music Distribution Tutorials</Button>
-      </Link>
+      <div className="flex gap-4 mb-4">
+        <Link href="/tutorials">
+          <Button>View Music Distribution Tutorials</Button>
+        </Link>
+        <Link href="/tutorials">
+          <Button>View Physical Art Tutorials</Button>
+        </Link>
+      </div>
 
       <Card>
         <CardHeader>
