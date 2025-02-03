@@ -6,7 +6,8 @@ import { Wallet, Network, Coins, Activity, Clock } from "lucide-react";
 interface WalletData {
   network: string;
   address: string;
-  balance: string;
+  balanceETH: string;
+  balanceWEI: string;
   lastTransaction: string;
   status: 'active' | 'inactive';
 }
@@ -50,9 +51,15 @@ export default function WalletInfo() {
           <Network className="h-4 w-4 text-muted-foreground" />
           <span>Network: {walletData?.network || "base-sepolia"}</span>
         </div>
-        <div className="flex items-center gap-2">
-          <Coins className="h-4 w-4 text-muted-foreground" />
-          <span>Balance: {walletData?.balance || "0.00"} ETH</span>
+        <div className="space-y-2">
+          <div className="flex items-center gap-2">
+            <Coins className="h-4 w-4 text-muted-foreground" />
+            <span>ETH: {walletData?.balanceETH || "0.00"}</span>
+          </div>
+          <div className="flex items-center gap-2 text-sm text-muted-foreground">
+            <Coins className="h-3 w-3" />
+            <span>WEI: {walletData?.balanceWEI || "0"}</span>
+          </div>
         </div>
         <div className="flex items-center gap-2">
           <Activity className="h-4 w-4 text-muted-foreground" />
