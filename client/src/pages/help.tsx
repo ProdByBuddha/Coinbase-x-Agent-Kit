@@ -2,9 +2,19 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { AlertCircle } from "lucide-react";
 
+import { Link } from "wouter";
+import { ChevronLeft } from "lucide-react";
+import { Button } from "@/components/ui/button";
+
 export default function Help() {
   return (
     <div className="p-6 max-w-4xl mx-auto space-y-6">
+      <Link href="/dashboard">
+        <Button variant="ghost" className="mb-4">
+          <ChevronLeft className="h-4 w-4 mr-2" />
+          Back to Dashboard
+        </Button>
+      </Link>
       <h1 className="text-4xl font-bold tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-primary to-primary-foreground">
         CDP AgentKit Help Guide
       </h1>
