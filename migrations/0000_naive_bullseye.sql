@@ -1,3 +1,4 @@
+
 CREATE TABLE IF NOT EXISTS "chats" (
 	"id" serial PRIMARY KEY NOT NULL,
 	"name" text NOT NULL,
@@ -15,7 +16,7 @@ CREATE TABLE IF NOT EXISTS "messages" (
 );
 --> statement-breakpoint
 DO $$ BEGIN
- ALTER TABLE "messages" ADD CONSTRAINT "messages_chat_id_chats_id_fk" FOREIGN KEY ("chat_id") REFERENCES "public"."chats"("id") ON DELETE no action ON UPDATE no action;
+ ALTER TABLE "messages" ADD CONSTRAINT "messages_chat_id_chats_id_fk" FOREIGN KEY ("chat_id") REFERENCES "public"."chats"("id") ON DELETE CASCADE ON UPDATE no action;
 EXCEPTION
  WHEN duplicate_object THEN null;
 END $$;
