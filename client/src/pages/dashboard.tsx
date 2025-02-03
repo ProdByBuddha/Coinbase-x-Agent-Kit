@@ -135,7 +135,10 @@ export default function Dashboard() {
 
   const handleUpdateChat = () => {
     if (!editingChat || !newChatName.trim()) return;
-    updateChatMutation.mutate(editingChat);
+    updateChatMutation.mutate({
+      ...editingChat,
+      name: newChatName,
+    });
   };
 
   const handleDeleteChat = (chatId: number) => {
@@ -228,12 +231,46 @@ export default function Dashboard() {
                             </DialogDescription>
                           </DialogHeader>
                           <div className="space-y-4 pt-4">
-                            <Input
-                              value={newChatName}
-                              onChange={(e) => setNewChatName(e.target.value)}
-                              placeholder="Enter new chat name"
-                              className="border-border/50 focus:border-primary/50"
-                            />
+                            <div className="space-y-2">
+                              <label className="text-sm font-medium">Chat Name</label>
+                              <Input
+                                value={newChatName}
+                                onChange={(e) => setNewChatName(e.target.value)}
+                                placeholder="Enter new chat name"
+                                className="border-border/50 focus:border-primary/50"
+                              />
+                            </div>
+                            <div className="space-y-2">
+                              <label className="text-sm font-medium">CDP API Key Name</label>
+                              <Input
+                                value={editingChat?.apiKeys?.cdpApiKeyName || ''}
+                                onChange={(e) => setEditingChat(prev => ({
+                                  ...prev!,
+                                  apiKeys: {
+                                    ...prev?.apiKeys,
+                                    cdpApiKeyName: e.target.value
+                                  }
+                                }))}
+                                placeholder="Enter CDP API Key Name"
+                                className="border-border/50 focus:border-primary/50"
+                              />
+                            </div>
+                            <div className="space-y-2">
+                              <label className="text-sm font-medium">CDP Private Key</label>
+                              <Input
+                                type="password"
+                                value={editingChat?.apiKeys?.cdpApiKeyPrivateKey || ''}
+                                onChange={(e) => setEditingChat(prev => ({
+                                  ...prev!,
+                                  apiKeys: {
+                                    ...prev?.apiKeys,
+                                    cdpApiKeyPrivateKey: e.target.value
+                                  }
+                                }))}
+                                placeholder="Enter CDP Private Key"
+                                className="border-border/50 focus:border-primary/50"
+                              />
+                            </div>
                             <Button 
                               onClick={handleUpdateChat} 
                               className="w-full"
