@@ -1,6 +1,13 @@
 import express, { type Request, Response, NextFunction } from "express";
 import { registerRoutes } from "./routes";
 import { setupVite, serveStatic, log } from "./vite";
+import fs from "fs";
+
+// Create wallet_data.txt if it doesn't exist
+if (!fs.existsSync("wallet_data.txt")) {
+  fs.writeFileSync("wallet_data.txt", "", "utf8");
+  log("Created empty wallet_data.txt file");
+}
 
 const app = express();
 app.use(express.json());
