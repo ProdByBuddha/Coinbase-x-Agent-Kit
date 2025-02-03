@@ -1,6 +1,40 @@
+
+# Dependencies
 node_modules
 dist
+
+# OS Files
 .DS_Store
+
+# Build files
 server/public
 vite.config.ts.*
 *.tar.gz
+
+# Environment & Secrets
+.env
+.env.*
+*.env
+.env.local
+.env.development
+.env.test
+.env.production
+
+# API Keys and Sensitive Data
+*_api_key*
+*_private_key*
+wallet_data.txt
+*_credentials*
+*.pem
+*.key
+*.cert
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Database
+*.sqlite
+*.db
