@@ -66,18 +66,16 @@ export async function initializeAgent() {
   try {
     // Initialize LLM using ChatOpenAI with OpenRouter configuration
     const llm = new ChatOpenAI({
-      modelName: "anthropic/claude-3.5-sonnet",
-      temperature: 0.8,
+      modelName: "deepseek-chat",
       streaming: true,
-      openAIApiKey: process.env.OPENROUTER_API_KEY
-    }, {
-      basePath: "https://openrouter.ai/api/v1",
-      baseOptions: {
-        headers: {
-          "HTTP-Referer": "https://replit.com",
-          "X-Title": "CDP AgentKit Chatbot"
-        }
+      apiKey: process.env.DEEPSEEK_API_KEY,
+      configuration: {
+      baseURL: "https://api.deepseek.com/v1",
+      defaultHeaders: {
+        "Content-Type": "application/json"
       }
+      },
+      temperature: 0.8
     });
 
     let walletDataStr: string | null = null;
