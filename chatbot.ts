@@ -37,19 +37,19 @@ async function getLLM(provider: LLMProvider = "openai"): Promise<any> {
       }
       const { HfInference } = await import('@huggingface/inference');
       const hf = new HfInference(process.env.HUGGINGFACE_API_KEY);
-      //Replace with appropriate DeepSeek model ID
       return {
         generate: async (prompt: string) => {
-          const response = await hf.generate({
+          const response = await hf.textGeneration({
+            model: "deepseek-ai/deepseek-coder-6.7b-instruct",
             inputs: prompt,
             parameters: {
               max_new_tokens: 2048,
               temperature: 0.7,
-              //Add other DeepSeek-specific parameters here if needed.
-            },
-            model: "TheBloke/deepseek-coder-33b-instruct" //Replace with the correct model ID
+              top_p: 0.95,
+              repetition_penalty: 1.1
+            }
           });
-          return response[0].generated_text;
+          return response.generated_text;
         }
       };
     default:
