@@ -1,3 +1,4 @@
+
 import {
   AgentKit,
   CdpWalletProvider,
@@ -12,66 +13,17 @@ import { getLangChainTools } from "@coinbase/agentkit-langchain";
 import { HumanMessage } from "@langchain/core/messages";
 import { MemorySaver } from "@langchain/langgraph";
 import { createReactAgent } from "@langchain/langgraph/prebuilt";
+import { pipeline } from '@huggingface/transformers';
 import * as dotenv from "dotenv";
 import * as fs from "fs";
 import * as readline from "readline";
 
-// Load environment variables
 dotenv.config();
 
-// LLM provider type definition
-type LLMProvider = "openai" | "deepseek";
-
-// Function to get LLM based on provider
-async function getLLM(provider: LLMProvider = "openai"): Promise<any> {
-  switch (provider) {
-    case "openai":
-      //This section remains unchanged for OpenAI
-      return new ChatOpenAI({
-        modelName: "gpt-4",
-        temperature: 0.7,
-      });
-    case "deepseek":
-      if (!process.env.HUGGINGFACE_API_KEY) {
-        throw new Error("HUGGINGFACE_API_KEY is required for DeepSeek LLM");
-      }
-      const { HfInference } = await import('@huggingface/inference');
-      const hf = new HfInference(process.env.HUGGINGFACE_API_KEY);
-      return {
-        generate: async (prompt: string) => {
-          const response = await hf.textGeneration({
-            model: "deepseek-ai/deepseek-coder-6.7b-instruct",
-            inputs: prompt,
-            parameters: {
-              max_new_tokens: 2048,
-              temperature: 0.7,
-              top_p: 0.95,
-              repetition_penalty: 1.1
-            }
-          });
-          return response.generated_text;
-        }
-      };
-    default:
-      throw new Error(`Unsupported LLM provider: ${provider}`);
-  }
-}
-
-// Validate environment variables
 function validateEnvironment(): void {
   const missingVars: string[] = [];
-  const llmProvider = process.env.LLM_PROVIDER as LLMProvider || "openai";
-  const requiredVars = ["CDP_API_KEY_NAME", "CDP_API_KEY_PRIVATE_KEY"];
-
-  switch (llmProvider) {
-    case "openai":
-      requiredVars.push("OPENAI_API_KEY");
-      break;
-    case "deepseek":
-      requiredVars.push("HUGGINGFACE_API_KEY");
-      break;
-  }
-
+  const requiredVars = ["OPENAI_API_KEY", "CDP_API_KEY_NAME", "CDP_API_KEY_PRIVATE_KEY"];
+  
   requiredVars.forEach(varName => {
     if (!process.env[varName]) {
       missingVars.push(varName);
@@ -91,44 +43,32 @@ function validateEnvironment(): void {
   }
 }
 
-// Validate environment before proceeding
 validateEnvironment();
 
-// Configure a file to persist the agent's CDP MPC Wallet Data
 const WALLET_DATA_FILE = "wallet_data.txt";
 
-// Initialize the agent
 export async function initializeAgent() {
   try {
-    // Initialize LLM based on provider
-    const llmProvider = process.env.LLM_PROVIDER as LLMProvider || "deepseek";
-    console.log(`Initializing LLM with provider: ${llmProvider}`);
+    const pipe = await pipeline('text-generation', 'onnx-community/DeepSeek-R1-Distill-Qwen-1.5B-ONNX');
+    let walletDataStr: string | null = null;
 
-    const llm = await getLLM(llmProvider);
-    console.log(`Successfully initialized ${llmProvider} LLM`);
-
-    // Read existing wallet data if available
-    let walletDataStr: string | undefined;
     if (fs.existsSync(WALLET_DATA_FILE)) {
       try {
         walletDataStr = fs.readFileSync(WALLET_DATA_FILE, "utf8");
-        console.log("Successfully loaded existing wallet data");
       } catch (error) {
         console.error("Error reading wallet data:", error);
       }
     }
 
-    // Configure CDP Wallet Provider
     const config = {
       apiKeyName: process.env.CDP_API_KEY_NAME,
       apiKeyPrivateKey: process.env.CDP_API_KEY_PRIVATE_KEY?.replace(/\\n/g, "\n"),
-      cdpWalletData: walletDataStr,
+      cdpWalletData: walletDataStr || undefined,
       networkId: process.env.NETWORK_ID || "base-sepolia",
     };
 
     const walletProvider = await CdpWalletProvider.configureWithWallet(config);
 
-    // Initialize AgentKit
     const agentkit = await AgentKit.from({
       walletProvider,
       actionProviders: [
@@ -149,14 +89,10 @@ export async function initializeAgent() {
 
     const tools = await getLangChainTools(agentkit);
     const memory = new MemorySaver();
-    const agentConfig = {
-      configurable: {
-        thread_id: "CDP AgentKit Chatbot Example!"
-      }
-    };
+    const agentConfig = { configurable: { thread_id: "CDP AgentKit Chatbot Example!" } };
 
     const agent = createReactAgent({
-      llm,
+      llm: pipe,
       tools,
       checkpointSaver: memory,
       messageModifier: `
@@ -172,10 +108,8 @@ export async function initializeAgent() {
       `,
     });
 
-    // Save wallet data
     const exportedWallet = await walletProvider.exportWallet();
     fs.writeFileSync(WALLET_DATA_FILE, JSON.stringify(exportedWallet));
-    console.log("Agent initialization completed successfully");
 
     return { agent, config: agentConfig };
   } catch (error) {
@@ -184,9 +118,36 @@ export async function initializeAgent() {
   }
 }
 
-// Run the agent in chat mode
+async function runAutonomousMode(agent: any, config: any, interval = 10) {
+  console.log("Starting autonomous mode...");
+
+  while (true) {
+    try {
+      const thought = "Be creative and do something interesting on the blockchain. Choose an action or set of actions and execute it that highlights your abilities.";
+      const stream = await agent.stream({ messages: [new HumanMessage(thought)] }, config);
+
+      for await (const chunk of stream) {
+        if ("agent" in chunk) {
+          console.log(chunk.agent.messages[0].content);
+        } else if ("tools" in chunk) {
+          console.log(chunk.tools.messages[0].content);
+        }
+        console.log("-------------------");
+      }
+
+      await new Promise(resolve => setTimeout(resolve, interval * 1000));
+    } catch (error) {
+      if (error instanceof Error) {
+        console.error("Error:", error.message);
+      }
+      process.exit(1);
+    }
+  }
+}
+
 async function runChatMode(agent: any, config: any) {
   console.log("Starting chat mode... Type 'exit' to end.");
+
   const rl = readline.createInterface({
     input: process.stdin,
     output: process.stdout,
@@ -198,14 +159,21 @@ async function runChatMode(agent: any, config: any) {
   try {
     while (true) {
       const userInput = await question("\nPrompt: ");
+
       if (userInput.toLowerCase() === "exit") {
         break;
       }
 
-      const response = await agent.call({ messages: [new HumanMessage(userInput)] }, config);
+      const stream = await agent.stream({ messages: [new HumanMessage(userInput)] }, config);
 
-      console.log(response.response);
-      console.log("-------------------");
+      for await (const chunk of stream) {
+        if ("agent" in chunk) {
+          console.log(chunk.agent.messages[0].content);
+        } else if ("tools" in chunk) {
+          console.log(chunk.tools.messages[0].content);
+        }
+        console.log("-------------------");
+      }
     }
   } catch (error) {
     if (error instanceof Error) {
@@ -217,11 +185,45 @@ async function runChatMode(agent: any, config: any) {
   }
 }
 
-// Main function to start the application
+async function chooseMode(): Promise<"chat" | "auto"> {
+  const rl = readline.createInterface({
+    input: process.stdin,
+    output: process.stdout,
+  });
+
+  const question = (prompt: string): Promise<string> =>
+    new Promise(resolve => rl.question(prompt, resolve));
+
+  while (true) {
+    console.log("\nAvailable modes:");
+    console.log("1. chat    - Interactive chat mode");
+    console.log("2. auto    - Autonomous action mode");
+
+    const choice = (await question("\nChoose a mode (enter number or name): "))
+      .toLowerCase()
+      .trim();
+
+    if (choice === "1" || choice === "chat") {
+      rl.close();
+      return "chat";
+    } else if (choice === "2" || choice === "auto") {
+      rl.close();
+      return "auto";
+    }
+    console.log("Invalid choice. Please try again.");
+  }
+}
+
 async function main() {
   try {
     const { agent, config } = await initializeAgent();
-    await runChatMode(agent, config);
+    const mode = await chooseMode();
+
+    if (mode === "chat") {
+      await runChatMode(agent, config);
+    } else {
+      await runAutonomousMode(agent, config);
+    }
   } catch (error) {
     if (error instanceof Error) {
       console.error("Error:", error.message);
@@ -230,7 +232,6 @@ async function main() {
   }
 }
 
-// Start the application
 if (import.meta.url === import.meta.resolve("./chatbot.ts")) {
   console.log("Starting Agent...");
   main().catch(error => {
