@@ -22,10 +22,10 @@ export default function MessageBubble({ content, type, timestamp }: MessageBubbl
     )}>
       <Card className={cn(
         "max-w-[80%] p-3",
-        isUser ? "bg-primary text-primary-foreground" : "bg-muted",
+        isUser ? "bg-primary text-primary-foreground" : "bg-muted text-foreground",
         type === "tool" && "border-l-4 border-accent"
       )}>
-        <div className="prose prose-sm dark:prose-invert max-w-none">
+        <div className="prose prose-sm dark:prose-invert max-w-none text-current">
           <ReactMarkdown>
             {content}
           </ReactMarkdown>
