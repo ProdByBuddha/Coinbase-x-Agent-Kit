@@ -38,6 +38,34 @@ function getLLM(provider: LLMProvider = "openai"): ChatOpenAI {
       return new ChatOpenAI({
         modelName: "deepseek-chat",
         temperature: 0.7,
+        openAIApiKey: process.env.DEEPSEEK_API_KEY,
+        configuration: {
+          baseURL: "https://api.deepseek.com/v1",
+          defaultHeaders: {
+            "api-key": process.env.DEEPSEEK_API_KEY,
+          },
+        },
+      });
+    case "anthropic":
+      throw new Error("Anthropic support coming soon");
+    default:
+      throw new Error(`Unsupported LLM provider: ${provider}`);
+  }
+}
+function getLLM(provider: LLMProvider = "openai"): ChatOpenAI {
+  switch (provider) {
+    case "openai":
+      return new ChatOpenAI({
+        modelName: "gpt-4",
+        temperature: 0.7,
+      });
+    case "deepseek":
+      if (!process.env.DEEPSEEK_API_KEY) {
+        throw new Error("DEEPSEEK_API_KEY is required for DeepSeek LLM");
+      }
+      return new ChatOpenAI({
+        modelName: "deepseek-chat",
+        temperature: 0.7,
         maxTokens: 2048,
         streaming: true,
         openAIApiKey: process.env.DEEPSEEK_API_KEY,
