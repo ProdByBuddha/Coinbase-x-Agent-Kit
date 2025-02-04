@@ -38,9 +38,16 @@ function getLLM(provider: LLMProvider = "openai"): ChatOpenAI {
       return new ChatOpenAI({
         modelName: "deepseek-chat",
         temperature: 0.7,
+        maxTokens: 2048,
+        streaming: true,
         openAIApiKey: process.env.DEEPSEEK_API_KEY,
         configuration: {
           baseURL: "https://api.deepseek.com/v1",
+          defaultQuery: {},
+          defaultHeaders: {
+            "api-key": process.env.DEEPSEEK_API_KEY,
+            "Content-Type": "application/json",
+          },
         },
       });
     case "anthropic":
@@ -96,6 +103,7 @@ export async function initializeAgent() {
     // Initialize LLM based on provider
     const llmProvider = process.env.LLM_PROVIDER as LLMProvider || "openai";
     const llm = getLLM(llmProvider);
+    console.log(`Initialized LLM with provider: ${llmProvider}`);
 
     // Read existing wallet data if available
     let walletDataStr: string | undefined;
