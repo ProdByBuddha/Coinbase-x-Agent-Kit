@@ -15,8 +15,8 @@ import { createReactAgent } from "@langchain/langgraph/prebuilt";
 import * as dotenv from "dotenv";
 import * as fs from "fs";
 import * as readline from "readline";
-import { pipeline } from '@huggingface/transformers';
-import { HuggingFaceLLM } from '@langchain/llms/huggingface';
+import { ChatOpenAI } from "@langchain/openai";
+import OpenAI from "openai"
 
 dotenv.config();
 
@@ -65,8 +65,11 @@ const WALLET_DATA_FILE = "wallet_data.txt";
  */
 export async function initializeAgent() {
   try {
-    // Allocate pipeline
-    const pipe = await pipeline('text-generation', 'onnx-community/DeepSeek-R1-Distill-Qwen-1.5B-ONNX');
+    // Initialize LLM
+    const llm = new OpenAI({
+      baseURL: "https://openrouter.ai/api/v1",
+      apiKey: process.env['OPENROUTER_API_KEY']
+    });
 
     let walletDataStr: string | null = null;
 
@@ -117,7 +120,7 @@ export async function initializeAgent() {
 
     // Create React Agent using the LLM and CDP AgentKit tools
     const agent = createReactAgent({
-      llm: new HuggingFaceLLM(pipe),
+      llm,
       tools,
       checkpointSaver: memory,
       messageModifier: `
