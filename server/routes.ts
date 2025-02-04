@@ -58,8 +58,11 @@ export function registerRoutes(app: Express) {
       const chatId = parseInt(id);
       console.log(`Attempting to delete chat with ID: ${chatId}`);
       
+      // First delete all messages associated with this chat
+      await db.delete(messages).where(eq(messages.chatId, chatId));
+      
+      // Then delete the chat
       const deleteResult = await db.delete(chats).where(eq(chats.id, chatId));
-      console.log('Delete result:', deleteResult);
       
       if (deleteResult) {
         console.log(`Successfully deleted chat ${chatId}`);
