@@ -16,7 +16,6 @@ import * as dotenv from "dotenv";
 import * as fs from "fs";
 import * as readline from "readline";
 import { ChatOpenAI } from "@langchain/openai";
-import OpenAI from "openai"
 
 dotenv.config();
 
@@ -68,11 +67,7 @@ export async function initializeAgent() {
     // Initialize LLM using ChatOpenAI with custom configuration
     const llm = new ChatOpenAI({
       configuration: {
-        baseURL: "https://openrouter.ai/api/v1",
-        defaultHeaders: {
-          "HTTP-Referer": process.env.SITE_URL || "https://replit.com",
-          "X-Title": "Replit CDP Agent"
-        }
+        baseURL: "https://openrouter.ai/api/v1"
       },
       modelName: "deepseek/deepseek-chat",
       temperature: 0.67,
