@@ -1,25 +1,14 @@
-import { isConfig } from 'drizzle-orm';
-import { Pool } from 'pg';
+import { defineConfig } from "drizzle-kit";
 
-const pool = new Pool({
-  connectionString: process.env.DATABASE_URL,
-});
+if (!process.env.DATABASE_URL) {
+  throw new Error("DATABASE_URL, ensure the database is provisioned");
+}
 
-export default {
-  driver: 'pg',
-  dbCredentials: async () => {
-    const { rows: [connectionDetails] } = await pool.query('SELECT host, port, user, password, database, ssl FROM pg_stat_user_tables');
-    return {
-      host: connectionDetails.host,
-      port: connectionDetails.port,
-      user: connectionDetails.user,
-      password: connectionDetails.password,
-      database: connectionDetails.database,
-      ssl: connectionDetails.ssl
-    };
+export default defineConfig({
+  out: "./migrations",
+  schema: "./db/schema.ts",
+  dialect: "postgresql",
+  dbCredentials: {
+    url: process.env.DATABASE_URL,
   },
-  verbose: true,
-  strict: true,
-  out: "./migrations", // Moved out property to the correct location
-  dialect: "postgresql", // Added dialect property
-} satisfies typeof isConfig;
+});
