@@ -1,6 +1,14 @@
 import { pgTable, text, serial, timestamp, json, foreignKey } from "drizzle-orm/pg-core";
 import { createInsertSchema, createSelectSchema } from "drizzle-zod";
 
+export const wallets = pgTable("wallets", {
+  id: serial("id").primaryKey(),
+  address: text("address").notNull(),
+  network: text("network").notNull(),
+  balance: text("balance"),
+  createdAt: timestamp("created_at").notNull().defaultNow()
+});
+
 export const chats = pgTable("chats", {
   id: serial("id").primaryKey(),
   name: text("name").notNull(),
