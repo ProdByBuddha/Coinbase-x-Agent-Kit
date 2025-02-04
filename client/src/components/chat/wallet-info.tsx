@@ -50,7 +50,7 @@ export default function WalletInfo() {
           <Network className="h-4 w-4 text-muted-foreground" />
           <span>Network: {walletData?.network || "base-sepolia"}</span>
         </div>
-        <div className="text-sm text-muted-foreground break-all">
+        <div className="text-sm text-muted-foreground whitespace-normal break-words">
           Address: {walletData?.address || "Not connected"}
         </div>
         {walletData?.balance && (
