@@ -311,7 +311,7 @@ export default function Dashboard() {
                   <CardContent>
                     <div className="flex items-center text-sm text-muted-foreground">
                       <Info className="h-4 w-4 mr-2" />
-                      {(chat.apiKeys?.cdpApiKeyName || process.env.CDP_API_KEY_NAME) ? (
+                      {(chat.apiKeys?.cdpApiKeyName || import.meta.env.VITE_CDP_API_KEY_NAME) ? (
                         <span className="text-success">API Keys Configured</span>
                       ) : (
                         <span className="text-warning">API Keys Not Configured</span>
