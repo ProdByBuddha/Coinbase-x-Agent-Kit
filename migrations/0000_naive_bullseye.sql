@@ -1,18 +1,18 @@
 
 CREATE TABLE IF NOT EXISTS "chats" (
-    "id" integer PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
-    "name" text NOT NULL,
-    "created_at" timestamp DEFAULT now() NOT NULL,
-    "api_keys" json
+	"id" serial PRIMARY KEY NOT NULL,
+	"name" text NOT NULL,
+	"created_at" timestamp DEFAULT now() NOT NULL,
+	"api_keys" json
 );
 --> statement-breakpoint
 CREATE TABLE IF NOT EXISTS "messages" (
-    "id" integer PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
-    "chat_id" integer NOT NULL,
-    "content" text NOT NULL,
-    "type" text NOT NULL,
-    "timestamp" timestamp DEFAULT now() NOT NULL,
-    "metadata" json
+	"id" serial PRIMARY KEY NOT NULL,
+	"chat_id" serial NOT NULL,
+	"content" text NOT NULL,
+	"type" text NOT NULL,
+	"timestamp" timestamp DEFAULT now() NOT NULL,
+	"metadata" json
 );
 --> statement-breakpoint
 DO $$ BEGIN

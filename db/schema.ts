@@ -1,16 +1,8 @@
-import { pgTable, text, integer, timestamp, json, foreignKey, sql } from "drizzle-orm/pg-core";
+import { pgTable, text, serial, timestamp, json, foreignKey } from "drizzle-orm/pg-core";
 import { createInsertSchema, createSelectSchema } from "drizzle-zod";
 
-export const wallets = pgTable("wallets", {
-  id: integer("id").primaryKey().notNull().default(sql("GENERATED ALWAYS AS IDENTITY")),
-  address: text("address").notNull(),
-  network: text("network").notNull(),
-  balance: text("balance"),
-  createdAt: timestamp("created_at").notNull().defaultNow()
-});
-
 export const chats = pgTable("chats", {
-  id: integer("id").primaryKey().notNull().default(sql("GENERATED ALWAYS AS IDENTITY")),
+  id: serial("id").primaryKey(),
   name: text("name").notNull(),
   createdAt: timestamp("created_at").notNull().defaultNow(),
   apiKeys: json("api_keys").$type<{
@@ -20,8 +12,8 @@ export const chats = pgTable("chats", {
 });
 
 export const messages = pgTable("messages", {
-  id: integer("id").primaryKey().notNull().default(sql("GENERATED ALWAYS AS IDENTITY")),
-  chatId: integer("chat_id").references(() => chats.id),
+  id: serial("id").primaryKey(),
+  chatId: serial("chat_id").references(() => chats.id),
   content: text("content").notNull(),
   type: text("type", { enum: ["user", "agent", "tool"] }).notNull(),
   timestamp: timestamp("timestamp").notNull().defaultNow(),
