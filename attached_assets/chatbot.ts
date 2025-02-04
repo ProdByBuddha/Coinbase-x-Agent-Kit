@@ -65,11 +65,8 @@ const WALLET_DATA_FILE = "wallet_data.txt";
 export async function initializeAgent() {
   try {
     // Initialize LLM
-    const llm = new ChatOpenAI({
-      model: "gpt-4o-mini",
-    });
-
-    let walletDataStr: string | null = null;
+    const llmProvider = process.env.LLM_PROVIDER || "openai";
+    const llm = getLLM(llmProvider as LLMProvider);
 
     // Read existing wallet data if available
     if (fs.existsSync(WALLET_DATA_FILE)) {
