@@ -16,6 +16,7 @@ import * as dotenv from "dotenv";
 import * as fs from "fs";
 import * as readline from "readline";
 import { pipeline } from '@huggingface/transformers';
+import { HuggingFaceLLM } from '@langchain/llms/huggingface';
 
 dotenv.config();
 
@@ -116,7 +117,7 @@ export async function initializeAgent() {
 
     // Create React Agent using the LLM and CDP AgentKit tools
     const agent = createReactAgent({
-      llm,
+      llm: new HuggingFaceLLM(pipe),
       tools,
       checkpointSaver: memory,
       messageModifier: `
