@@ -37,13 +37,10 @@ yarn-error.log*
 # Database
 *.sqlite
 *.db
-*.sql
-migrations/
-drizzle/
-.drizzle/
 db.config
 *.dump
 *.backup
 postgres/
 mysql/
 pgdata/
+.drizzle/
