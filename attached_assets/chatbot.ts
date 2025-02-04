@@ -30,7 +30,7 @@ function validateEnvironment(): void {
   const missingVars: string[] = [];
 
   // Check required variables
-  const requiredVars = ["OPENAI_API_KEY", "CDP_API_KEY_NAME", "CDP_API_KEY_PRIVATE_KEY"];
+  const requiredVars = ["OPENROUTER_API_KEY", "CDP_API_KEY_NAME", "CDP_API_KEY_PRIVATE_KEY"];
   requiredVars.forEach(varName => {
     if (!process.env[varName]) {
       missingVars.push(varName);
@@ -65,10 +65,19 @@ const WALLET_DATA_FILE = "wallet_data.txt";
  */
 export async function initializeAgent() {
   try {
-    // Initialize LLM
-    const llm = new OpenAI({
-      baseURL: "https://openrouter.ai/api/v1",
-      apiKey: process.env['OPENROUTER_API_KEY']
+    // Initialize LLM using ChatOpenAI with custom configuration
+    const llm = new ChatOpenAI({
+      configuration: {
+        baseURL: "https://openrouter.ai/api/v1",
+        defaultHeaders: {
+          "HTTP-Referer": process.env.SITE_URL || "https://replit.com",
+          "X-Title": "Replit CDP Agent"
+        }
+      },
+      modelName: "deepseek/deepseek-chat",
+      temperature: 0.67,
+      topP: 1,
+      openAIApiKey: process.env.OPENROUTER_API_KEY,
     });
 
     let walletDataStr: string | null = null;
