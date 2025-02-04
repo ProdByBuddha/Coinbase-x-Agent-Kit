@@ -192,29 +192,29 @@ export default function Dashboard() {
         </Sidebar>
 
         <main className="flex-1 overflow-auto">
-          <div className="mx-auto max-w-7xl p-6 space-y-8">
-            <div className="flex flex-col space-y-4 md:flex-row md:items-center md:justify-between md:space-y-0">
-              <div>
-                <h1 className="text-4xl font-bold tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-primary to-primary-foreground">
+          <div className="mx-auto max-w-7xl p-8 space-y-10">
+            <div className="flex flex-col space-y-6 md:flex-row md:items-center md:justify-between md:space-y-0">
+              <div className="space-y-3">
+                <h1 className="text-5xl font-bold tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-primary via-primary/90 to-primary-foreground animate-gradient-x">
                   Welcome to CDP AgentKit
                 </h1>
-                <p className="mt-2 text-muted-foreground">
+                <p className="text-lg text-muted-foreground/90 max-w-2xl">
                   Manage your chat instances and configurations from one central dashboard.
                 </p>
               </div>
               <Button 
                 onClick={() => createChatMutation.mutate()}
-                className="relative overflow-hidden group hover:shadow-lg transition-all duration-300"
+                className="relative overflow-hidden group hover:scale-105 hover:shadow-xl transition-all duration-300 bg-gradient-to-r from-primary to-primary-foreground"
                 size="lg"
                 disabled={createChatMutation.isPending}
               >
-                <Plus className="mr-2 h-4 w-4" />
+                <Plus className="mr-2 h-5 w-5 group-hover:rotate-90 transition-transform duration-300" />
                 Create New Chat
-                <div className="absolute inset-0 bg-gradient-to-r from-primary/20 to-primary-foreground/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                <div className="absolute inset-0 bg-white/10 opacity-0 group-hover:opacity-100 transition-all duration-300 blur-sm" />
               </Button>
             </div>
 
-            <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+            <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
               {chatInstances.map((chat) => (
                 <Card key={chat.id} className="group hover:shadow-lg transition-all duration-300 border-border/50 backdrop-blur-sm bg-background/95">
                   <CardHeader className="flex flex-row items-center justify-between space-y-0">
