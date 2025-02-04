@@ -1,8 +1,8 @@
 
 CREATE TABLE IF NOT EXISTS "wallets" (
-  "id" serial PRIMARY KEY NOT NULL,
-  "address" text NOT NULL,
-  "network" text NOT NULL,
-  "balance" text,
-  "created_at" timestamp DEFAULT now() NOT NULL
+    "id" integer PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
+    "address" text NOT NULL,
+    "network" text NOT NULL,
+    "balance" text,
+    "created_at" timestamp DEFAULT now() NOT NULL
 );
