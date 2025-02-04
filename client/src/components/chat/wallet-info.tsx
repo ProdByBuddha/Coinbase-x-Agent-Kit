@@ -53,11 +53,9 @@ export default function WalletInfo() {
         <div className="text-sm text-muted-foreground whitespace-normal break-words">
           Address: {walletData?.address || "Not connected"}
         </div>
-        {walletData?.balance && (
           <div className="text-sm text-muted-foreground">
-            Balance: {walletData.balance} ETH
+            Balance: {walletData?.balance ?? "Fetching..."} ETH
           </div>
-        )}
       </CardContent>
     </Card>
   );
