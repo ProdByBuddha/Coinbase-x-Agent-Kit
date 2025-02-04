@@ -204,13 +204,13 @@ export default function Dashboard() {
               </div>
               <Button 
                 onClick={() => createChatMutation.mutate()}
-                className="relative overflow-hidden group hover:shadow-lg transition-all duration-300"
+                className="relative overflow-hidden group hover:shadow-xl transition-all duration-300 bg-gradient-to-r from-primary via-primary/90 to-primary-foreground hover:scale-105 border border-primary/20"
                 size="lg"
                 disabled={createChatMutation.isPending}
               >
-                <Plus className="mr-2 h-4 w-4" />
+                <Plus className="mr-2 h-4 w-4 group-hover:rotate-90 transition-transform duration-300" />
                 Create New Chat
-                <div className="absolute inset-0 bg-gradient-to-r from-primary/20 to-primary-foreground/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                <div className="absolute inset-0 bg-gradient-to-r from-primary/40 to-primary-foreground/40 opacity-0 group-hover:opacity-100 transition-all duration-300 blur-sm" />
               </Button>
             </div>
 
