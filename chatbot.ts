@@ -12,7 +12,6 @@ import { getLangChainTools } from "@coinbase/agentkit-langchain";
 import { HumanMessage } from "@langchain/core/messages";
 import { MemorySaver } from "@langchain/langgraph";
 import { createReactAgent } from "@langchain/langgraph/prebuilt";
-import { ChatOpenAI } from "@langchain/openai";
 import * as dotenv from "dotenv";
 import * as fs from "fs";
 import * as readline from "readline";
@@ -21,39 +20,38 @@ import * as readline from "readline";
 dotenv.config();
 
 // LLM provider type definition
-type LLMProvider = "openai" | "deepseek" | "anthropic";
+type LLMProvider = "openai" | "deepseek";
 
 // Function to get LLM based on provider
-function getLLM(provider: LLMProvider = "openai"): ChatOpenAI {
+async function getLLM(provider: LLMProvider = "openai"): Promise<any> {
   switch (provider) {
     case "openai":
+      //This section remains unchanged for OpenAI
       return new ChatOpenAI({
         modelName: "gpt-4",
         temperature: 0.7,
       });
     case "deepseek":
-      if (!process.env.DEEPSEEK_API_KEY) {
-        throw new Error("DEEPSEEK_API_KEY is required for DeepSeek LLM");
+      if (!process.env.HUGGINGFACE_API_KEY) {
+        throw new Error("HUGGINGFACE_API_KEY is required for DeepSeek LLM");
       }
-      return new ChatOpenAI({
-        modelName: "deepseek-chat",
-        temperature: 0.7,
-        maxTokens: 2048,
-        streaming: true,
-        openAIApiKey: process.env.DEEPSEEK_API_KEY,
-        configuration: {
-          baseURL: "https://api.deepseek.com/v1",
-          defaultQuery: {},
-          defaultHeaders: {
-            "api-key": process.env.DEEPSEEK_API_KEY,
-            "Content-Type": "application/json",
-          },
-        },
-        timeout: 60000, // 60 seconds timeout
-        maxRetries: 3,  // Maximum 3 retries on failure
-      });
-    case "anthropic":
-      throw new Error("Anthropic support coming soon");
+      const { HfInference } = await import('@huggingface/inference');
+      const hf = new HfInference(process.env.HUGGINGFACE_API_KEY);
+      //Replace with appropriate DeepSeek model ID
+      return {
+        generate: async (prompt: string) => {
+          const response = await hf.generate({
+            inputs: prompt,
+            parameters: {
+              max_new_tokens: 2048,
+              temperature: 0.7,
+              //Add other DeepSeek-specific parameters here if needed.
+            },
+            model: "TheBloke/deepseek-coder-33b-instruct" //Replace with the correct model ID
+          });
+          return response[0].generated_text;
+        }
+      };
     default:
       throw new Error(`Unsupported LLM provider: ${provider}`);
   }
@@ -70,7 +68,7 @@ function validateEnvironment(): void {
       requiredVars.push("OPENAI_API_KEY");
       break;
     case "deepseek":
-      requiredVars.push("DEEPSEEK_API_KEY");
+      requiredVars.push("HUGGINGFACE_API_KEY");
       break;
   }
 
@@ -103,10 +101,10 @@ const WALLET_DATA_FILE = "wallet_data.txt";
 export async function initializeAgent() {
   try {
     // Initialize LLM based on provider
-    const llmProvider = process.env.LLM_PROVIDER as LLMProvider || "openai";
+    const llmProvider = process.env.LLM_PROVIDER as LLMProvider || "deepseek";
     console.log(`Initializing LLM with provider: ${llmProvider}`);
 
-    const llm = getLLM(llmProvider);
+    const llm = await getLLM(llmProvider);
     console.log(`Successfully initialized ${llmProvider} LLM`);
 
     // Read existing wallet data if available
@@ -204,19 +202,10 @@ async function runChatMode(agent: any, config: any) {
         break;
       }
 
-      const stream = await agent.stream(
-        { messages: [new HumanMessage(userInput)] },
-        config
-      );
+      const response = await agent.call({ messages: [new HumanMessage(userInput)] }, config);
 
-      for await (const chunk of stream) {
-        if ("agent" in chunk) {
-          console.log(chunk.agent.messages[0].content);
-        } else if ("tools" in chunk) {
-          console.log(chunk.tools.messages[0].content);
-        }
-        console.log("-------------------");
-      }
+      console.log(response.response);
+      console.log("-------------------");
     }
   } catch (error) {
     if (error instanceof Error) {
