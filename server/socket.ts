@@ -1,5 +1,5 @@
 import type { Server } from "socket.io";
-import { initializeAgent } from "../attached_assets/chatbot.js";
+import { initializeAgent } from "../server/chatbot.js";
 import { db } from "@db";
 import { messages } from "@db/schema";
 import { HumanMessage } from "@langchain/core/messages";

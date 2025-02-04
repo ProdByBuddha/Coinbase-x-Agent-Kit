@@ -1,48 +1,35 @@
-
-# CDP AgentKit Chatbot - Complete Technical Documentation
-
-## 1. File Structure and Dependencies
-```typescript
-// Core CDP AgentKit imports for blockchain functionality
 import {
-  AgentKit,                  // Main framework for blockchain operations
-  CdpWalletProvider,         // Manages wallet and key operations
-  wethActionProvider,        // Wrapped ETH operations
-  walletActionProvider,      // Wallet management functions
-  erc20ActionProvider,       // ERC20 token operations
-  cdpApiActionProvider,      // CDP API integration
-  cdpWalletActionProvider,   // CDP wallet management
-  pythActionProvider,        // Price feed functionality
+  AgentKit,
+  CdpWalletProvider,
+  wethActionProvider,
+  walletActionProvider,
+  erc20ActionProvider,
+  cdpApiActionProvider,
+  cdpWalletActionProvider,
+  pythActionProvider,
 } from "@coinbase/agentkit";
+import { getLangChainTools } from "@coinbase/agentkit-langchain";
+import { HumanMessage } from "@langchain/core/messages";
+import { MemorySaver } from "@langchain/langgraph";
+import { createReactAgent } from "@langchain/langgraph/prebuilt";
+import * as dotenv from "dotenv";
+import * as fs from "fs";
+import * as readline from "readline";
+import { ChatOpenAI } from "@langchain/openai";
 
-// LangChain integration imports for AI capabilities
-import { getLangChainTools } from "@coinbase/agentkit-langchain";    // Tool integration
-import { HumanMessage } from "@langchain/core/messages";             // Message handling
-import { MemorySaver } from "@langchain/langgraph";                  // Memory management
-import { createReactAgent } from "@langchain/langgraph/prebuilt";    // Agent creation
-import { ChatOpenAI } from "@langchain/openai";                      // OpenAI integration
-
-// System utilities
-import * as dotenv from "dotenv";        // Environment variable management
-import * as fs from "fs";                // File system operations
-import * as readline from "readline";     // Command line interface
-```
-
-## 2. Environment Management
-```typescript
-// Load environment variables
 dotenv.config();
 
-// Environment validation function
+/**
+ * Validates that required environment variables are set
+ *
+ * @throws {Error} - If required environment variables are missing
+ * @returns {void}
+ */
 function validateEnvironment(): void {
   const missingVars: string[] = [];
-  const requiredVars = [
-    "OPENAI_API_KEY",           // Required for AI functionality
-    "CDP_API_KEY_NAME",         // CDP API authentication
-    "CDP_API_KEY_PRIVATE_KEY"   // CDP API private key
-  ];
-  
-  // Check each required variable
+
+  // Check required variables
+  const requiredVars = ["DEEPSEEK_API_KEY", "CDP_API_KEY_NAME", "CDP_API_KEY_PRIVATE_KEY"];
   requiredVars.forEach(varName => {
     if (!process.env[varName]) {
       missingVars.push(varName);
@@ -58,36 +45,52 @@ function validateEnvironment(): void {
     process.exit(1);
   }
 
-  // Network ID warning
+  // Warn about optional NETWORK_ID
   if (!process.env.NETWORK_ID) {
     console.warn("Warning: NETWORK_ID not set, defaulting to base-sepolia testnet");
   }
 }
-```
 
-## 3. Agent Initialization
-```typescript
-// Wallet data persistence
+// Add this right after imports and before any other code
+validateEnvironment();
+
+// Configure a file to persist the agent's CDP MPC Wallet Data
 const WALLET_DATA_FILE = "wallet_data.txt";
 
-async function initializeAgent() {
+/**
+ * Initialize the agent with CDP Agentkit
+ *
+ * @returns Agent executor and config
+ */
+export async function initializeAgent() {
   try {
-    // Initialize LLM with GPT-4
+    // Initialize LLM using ChatOpenAI with OpenRouter configuration
     const llm = new ChatOpenAI({
-      model: "gpt-4o-mini",
+      modelName: "deepseek-chat",
+      streaming: true,
+      apiKey: process.env.DEEPSEEK_API_KEY,
+      configuration: {
+      baseURL: "https://api.deepseek.com/v1",
+      defaultHeaders: {
+        "Content-Type": "application/json"
+      }
+      },
+      temperature: 0.8
     });
 
-    // Handle wallet data persistence
     let walletDataStr: string | null = null;
+
+    // Read existing wallet data if available
     if (fs.existsSync(WALLET_DATA_FILE)) {
       try {
         walletDataStr = fs.readFileSync(WALLET_DATA_FILE, "utf8");
       } catch (error) {
         console.error("Error reading wallet data:", error);
+        // Continue without wallet data
       }
     }
 
-    // CDP Configuration setup
+    // Configure CDP Wallet Provider
     const config = {
       apiKeyName: process.env.CDP_API_KEY_NAME,
       apiKeyPrivateKey: process.env.CDP_API_KEY_PRIVATE_KEY?.replace(/\\n/g, "\n"),
@@ -95,17 +98,16 @@ async function initializeAgent() {
       networkId: process.env.NETWORK_ID || "base-sepolia",
     };
 
-    // Initialize wallet provider
     const walletProvider = await CdpWalletProvider.configureWithWallet(config);
 
-    // Setup AgentKit with all action providers
+    // Initialize AgentKit
     const agentkit = await AgentKit.from({
       walletProvider,
       actionProviders: [
-        wethActionProvider(),           // WETH operations
-        pythActionProvider(),           // Price feeds
-        walletActionProvider(),         // Wallet management
-        erc20ActionProvider(),          // ERC20 tokens
+        wethActionProvider(),
+        pythActionProvider(),
+        walletActionProvider(),
+        erc20ActionProvider(),
         cdpApiActionProvider({
           apiKeyName: process.env.CDP_API_KEY_NAME,
           apiKeyPrivateKey: process.env.CDP_API_KEY_PRIVATE_KEY?.replace(/\\n/g, "\n"),
@@ -117,70 +119,61 @@ async function initializeAgent() {
       ],
     });
 
-    // Get LangChain tools
     const tools = await getLangChainTools(agentkit);
 
-    // Initialize memory and configuration
+    // Store buffered conversation history in memory
     const memory = new MemorySaver();
-    const agentConfig = { 
-      configurable: { 
-        thread_id: "CDP AgentKit Chatbot Example!" 
-      } 
-    };
+    const agentConfig = { configurable: { thread_id: "CDP AgentKit Chatbot Example!" } };
 
-    // Create React Agent
+    // Create React Agent using the LLM and CDP AgentKit tools
     const agent = createReactAgent({
       llm,
       tools,
       checkpointSaver: memory,
       messageModifier: `
-        You are a helpful agent that can interact onchain using the Coinbase Developer Platform AgentKit.
-        You are empowered to interact onchain using your tools.
-        If you ever need funds, you can request them from the faucet if you are on network ID 'base-sepolia'.
-        If not, you can provide your wallet details and request funds from the user.
-        Before executing your first action, get the wallet details to see what network you're on.
-        If there is a 5XX (internal) HTTP error code, ask the user to try again later.
-        If someone asks you to do something you can't do with your currently available tools,
-        you must say so, and encourage them to implement it themselves using the CDP SDK + Agentkit,
-        recommend they go to docs.cdp.coinbase.com for more information.
-        Be concise and helpful with your responses.
-        Refrain from restating your tools' descriptions unless it is explicitly requested.
-      `,
+        You are a helpful agent that can interact onchain using the Coinbase Developer Platform AgentKit. You are 
+        empowered to interact onchain using your tools. If you ever need funds, you can request them from the 
+        faucet if you are on network ID 'base-sepolia'. If not, you can provide your wallet details and request 
+        funds from the user. Before executing your first action, get the wallet details to see what network 
+        you're on. If there is a 5XX (internal) HTTP error code, ask the user to try again later. If someone 
+        asks you to do something you can't do with your currently available tools, you must say so, and 
+        encourage them to implement it themselves using the CDP SDK + Agentkit, recommend they go to 
+        docs.cdp.coinbase.com for more information. Be concise and helpful with your responses. Refrain from 
+        restating your tools' descriptions unless it is explicitly requested.
+        `,
     });
 
-    // Save wallet data for persistence
+    // Save wallet data
     const exportedWallet = await walletProvider.exportWallet();
     fs.writeFileSync(WALLET_DATA_FILE, JSON.stringify(exportedWallet));
 
     return { agent, config: agentConfig };
   } catch (error) {
     console.error("Failed to initialize agent:", error);
-    throw error;
+    throw error; // Re-throw to be handled by caller
   }
 }
-```
 
-## 4. Operation Modes
-
-### 4.1 Autonomous Mode
-```typescript
+/**
+ * Run the agent autonomously with specified intervals
+ *
+ * @param agent - The agent executor
+ * @param config - Agent configuration
+ * @param interval - Time interval between actions in seconds
+ */
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 async function runAutonomousMode(agent: any, config: any, interval = 10) {
   console.log("Starting autonomous mode...");
 
+  // eslint-disable-next-line no-constant-condition
   while (true) {
     try {
-      // Generate creative blockchain interaction
       const thought =
         "Be creative and do something interesting on the blockchain. " +
         "Choose an action or set of actions and execute it that highlights your abilities.";
 
-      // Process and stream results
-      const stream = await agent.stream(
-        { messages: [new HumanMessage(thought)] },
-        config
-      );
+      const stream = await agent.stream({ messages: [new HumanMessage(thought)] }, config);
 
-      // Handle stream chunks
       for await (const chunk of stream) {
         if ("agent" in chunk) {
           console.log(chunk.agent.messages[0].content);
@@ -190,7 +183,6 @@ async function runAutonomousMode(agent: any, config: any, interval = 10) {
         console.log("-------------------");
       }
 
-      // Wait for next interval
       await new Promise(resolve => setTimeout(resolve, interval * 1000));
     } catch (error) {
       if (error instanceof Error) {
@@ -200,40 +192,36 @@ async function runAutonomousMode(agent: any, config: any, interval = 10) {
     }
   }
 }
-```
 
-### 4.2 Chat Mode
-```typescript
+/**
+ * Run the agent interactively based on user input
+ *
+ * @param agent - The agent executor
+ * @param config - Agent configuration
+ */
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 async function runChatMode(agent: any, config: any) {
   console.log("Starting chat mode... Type 'exit' to end.");
 
-  // Initialize readline interface
   const rl = readline.createInterface({
     input: process.stdin,
     output: process.stdout,
   });
 
-  // Promise wrapper for readline
   const question = (prompt: string): Promise<string> =>
     new Promise(resolve => rl.question(prompt, resolve));
 
   try {
+    // eslint-disable-next-line no-constant-condition
     while (true) {
-      // Get user input
       const userInput = await question("\nPrompt: ");
 
-      // Check for exit command
       if (userInput.toLowerCase() === "exit") {
         break;
       }
 
-      // Process user input
-      const stream = await agent.stream(
-        { messages: [new HumanMessage(userInput)] },
-        config
-      );
+      const stream = await agent.stream({ messages: [new HumanMessage(userInput)] }, config);
 
-      // Handle response stream
       for await (const chunk of stream) {
         if ("agent" in chunk) {
           console.log(chunk.agent.messages[0].content);
@@ -252,33 +240,31 @@ async function runChatMode(agent: any, config: any) {
     rl.close();
   }
 }
-```
 
-### 4.3 Mode Selection
-```typescript
+/**
+ * Choose whether to run in autonomous or chat mode based on user input
+ *
+ * @returns Selected mode
+ */
 async function chooseMode(): Promise<"chat" | "auto"> {
-  // Initialize readline interface
   const rl = readline.createInterface({
     input: process.stdin,
     output: process.stdout,
   });
 
-  // Promise wrapper for readline
   const question = (prompt: string): Promise<string> =>
     new Promise(resolve => rl.question(prompt, resolve));
 
+  // eslint-disable-next-line no-constant-condition
   while (true) {
-    // Display mode options
     console.log("\nAvailable modes:");
     console.log("1. chat    - Interactive chat mode");
     console.log("2. auto    - Autonomous action mode");
 
-    // Get user choice
     const choice = (await question("\nChoose a mode (enter number or name): "))
       .toLowerCase()
       .trim();
 
-    // Process choice
     if (choice === "1" || choice === "chat") {
       rl.close();
       return "chat";
@@ -289,19 +275,15 @@ async function chooseMode(): Promise<"chat" | "auto"> {
     console.log("Invalid choice. Please try again.");
   }
 }
-```
 
-## 5. Main Program Execution
-```typescript
+/**
+ * Start the chatbot agent
+ */
 async function main() {
   try {
-    // Initialize agent and get configuration
     const { agent, config } = await initializeAgent();
-    
-    // Get user's preferred mode
     const mode = await chooseMode();
 
-    // Run selected mode
     if (mode === "chat") {
       await runChatMode(agent, config);
     } else {
@@ -315,39 +297,11 @@ async function main() {
   }
 }
 
-// Entry point check and execution
-if (require.main === module) {
+// Replace CommonJS module check with ESM module check
+if (import.meta.url === import.meta.resolve("./chatbot.ts")) {
   console.log("Starting Agent...");
   main().catch(error => {
     console.error("Fatal error:", error);
     process.exit(1);
   });
 }
-```
-
-## 6. Error Handling Strategy
-- Comprehensive try-catch blocks throughout the code
-- Specific error type checking using instanceof
-- Graceful degradation with appropriate error messages
-- Clean process exit on fatal errors
-- User-friendly error feedback
-
-## 7. Memory Management
-- Conversation history persistence using MemorySaver
-- Thread identification for context maintenance
-- State persistence across sessions
-- Efficient memory cleanup on exit
-
-## 8. Configuration Management
-- Environment variable validation
-- Wallet data persistence
-- Network configuration
-- API key management
-- Action provider configuration
-
-## 9. Security Considerations
-- API key validation
-- Secure wallet data storage
-- Error handling for sensitive operations
-- Network ID verification
-- Safe exit procedures
