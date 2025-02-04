@@ -15,6 +15,7 @@ import { createReactAgent } from "@langchain/langgraph/prebuilt";
 import * as dotenv from "dotenv";
 import * as fs from "fs";
 import * as readline from "readline";
+import  from '@huggingface/inference';
 
 dotenv.config();
 
@@ -64,13 +65,13 @@ const WALLET_DATA_FILE = "wallet_data.txt";
 export async function initializeAgent() {
   try {
     // Initialize LLM
-    const llmProvider = process.env.LLM_PROVIDER || "openai";
-    let llm;
-    llm = deepseek(llmProvider as LLMProvider);
-    }
+    const llm = new huggingface({
+      model: "deepseek-chat",
+    });
+
+    let walletDataStr: string | null = null;
 
     // Read existing wallet data if available
-    let walletDataStr: string | undefined;
     if (fs.existsSync(WALLET_DATA_FILE)) {
       try {
         walletDataStr = fs.readFileSync(WALLET_DATA_FILE, "utf8");
