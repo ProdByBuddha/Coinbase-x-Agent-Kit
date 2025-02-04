@@ -15,6 +15,7 @@
     "@coinbase/agentkit-langchain": "^0.1.0",
     "@hookform/resolvers": "^3.9.1",
     "@huggingface/inference": "^3.1.5",
+    "@huggingface/transformers": "^3.3.2",
     "@jridgewell/trace-mapping": "^0.3.25",
     "@langchain/core": "^0.3.37",
     "@langchain/langgraph": "^0.2.44",

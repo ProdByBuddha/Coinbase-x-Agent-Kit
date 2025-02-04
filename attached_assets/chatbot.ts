@@ -15,7 +15,7 @@ import { createReactAgent } from "@langchain/langgraph/prebuilt";
 import * as dotenv from "dotenv";
 import * as fs from "fs";
 import * as readline from "readline";
-import  from '@huggingface/inference';
+import { pipeline } from '@huggingface/transformers';
 
 dotenv.config();
 
@@ -64,10 +64,8 @@ const WALLET_DATA_FILE = "wallet_data.txt";
  */
 export async function initializeAgent() {
   try {
-    // Initialize LLM
-    const llm = new huggingface({
-      model: "deepseek-chat",
-    });
+    // Allocate pipeline
+    const pipe = await pipeline('text-generation', 'onnx-community/DeepSeek-R1-Distill-Qwen-1.5B-ONNX');
 
     let walletDataStr: string | null = null;
 
