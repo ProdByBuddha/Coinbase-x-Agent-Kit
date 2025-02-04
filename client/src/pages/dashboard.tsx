@@ -57,6 +57,10 @@ export default function Dashboard() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           name: `Chat ${chatInstances.length + 1}`,
+          apiKeys: {
+            cdpApiKeyName: import.meta.env.VITE_CDP_API_KEY_NAME,
+            cdpApiKeyPrivateKey: import.meta.env.VITE_CDP_API_KEY_PRIVATE_KEY
+          }
         }),
       });
       if (!response.ok) throw new Error('Failed to create chat');
@@ -259,7 +263,7 @@ export default function Dashboard() {
                             <div className="space-y-2">
                               <label className="text-sm font-medium">CDP API Key Name</label>
                               <Input
-                                value={editingChat?.apiKeys?.cdpApiKeyName || ''}
+                                value={editingChat?.apiKeys?.cdpApiKeyName || import.meta.env.VITE_CDP_API_KEY_NAME || ''}
                                 onChange={(e) => setEditingChat(prev => ({
                                   ...prev!,
                                   apiKeys: {
@@ -275,7 +279,7 @@ export default function Dashboard() {
                               <label className="text-sm font-medium">CDP Private Key</label>
                               <Input
                                 type="password"
-                                value={editingChat?.apiKeys?.cdpApiKeyPrivateKey || ''}
+                                value={editingChat?.apiKeys?.cdpApiKeyPrivateKey || import.meta.env.VITE_CDP_API_KEY_PRIVATE_KEY || ''}
                                 onChange={(e) => setEditingChat(prev => ({
                                   ...prev!,
                                   apiKeys: {
