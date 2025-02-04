@@ -147,10 +147,18 @@ export default function Chat() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!input.trim() || !socket || !isConnected || isLoading) return;
+    const trimmedInput = input.trim();
+    if (!trimmedInput || !socket || !isConnected || isLoading) return;
 
     setIsLoading(true);
-    socket.emit("chat", input);
+    const tempMessage: Message = {
+      id: `temp-${Date.now()}`,
+      content: trimmedInput,
+      type: "user",
+      timestamp: new Date(),
+    };
+    queryClient.setQueryData(['messages', chatId], (old: Message[] = []) => [...old, tempMessage]);
+    socket.emit("chat", trimmedInput);
     setInput("");
   };
 
