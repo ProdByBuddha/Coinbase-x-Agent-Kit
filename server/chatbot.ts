@@ -96,8 +96,8 @@ export async function initializeAgent() {
 
     // Configure CDP Wallet Provider with environment variables
     const config = {
-      apiKeyName: cdpApiKeyName,
-      apiKeyPrivateKey: cdpApiKeyPrivateKey,
+      apiKeyName: keys?.cdpApiKeyName || process.env.CDP_API_KEY_NAME,
+      apiKeyPrivateKey: (keys?.cdpApiKeyPrivateKey || process.env.CDP_API_KEY_PRIVATE_KEY)?.replace(/\\n/g, "\n"),
       cdpWalletData: walletDataStr || undefined,
       networkId: process.env.NETWORK_ID || "base-sepolia",
     };
