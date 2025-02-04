@@ -1,4 +1,3 @@
-
 import { Plus, Pencil, Trash2, Info } from "lucide-react";
 import { useState, useEffect } from "react";
 import { Link } from "wouter";
@@ -41,7 +40,7 @@ export default function Dashboard() {
   const { toast } = useToast();
   const queryClient = useQueryClient();
 
-  
+
 
   const { data: chatInstances = [] } = useQuery<ChatInstance[]>({
     queryKey: ['chats'],
@@ -265,7 +264,7 @@ export default function Dashboard() {
                             <div className="space-y-2">
                               <label className="text-sm font-medium">CDP API Key Name</label>
                               <Input
-                                value={editingChat?.apiKeys?.cdpApiKeyName || import.meta.env.VITE_CDP_API_KEY_NAME || ''}
+                                value={editingChat?.apiKeys?.cdpApiKeyName ?? ''}
                                 onChange={(e) => setEditingChat(prev => ({
                                   ...prev!,
                                   apiKeys: {
@@ -281,7 +280,7 @@ export default function Dashboard() {
                               <label className="text-sm font-medium">CDP Private Key</label>
                               <Input
                                 type="password"
-                                value={editingChat?.apiKeys?.cdpApiKeyPrivateKey || import.meta.env.VITE_CDP_API_KEY_PRIVATE_KEY || ''}
+                                value={editingChat?.apiKeys?.cdpApiKeyPrivateKey ?? ''}
                                 onChange={(e) => setEditingChat(prev => ({
                                   ...prev!,
                                   apiKeys: {
