@@ -1,3 +1,4 @@
+
 import { useQuery } from "@tanstack/react-query";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Wallet, Network } from "lucide-react";
@@ -5,11 +6,16 @@ import { Wallet, Network } from "lucide-react";
 interface WalletData {
   network: string;
   address: string;
+  balance?: string;
 }
 
 export default function WalletInfo() {
   const { data: walletData, isLoading } = useQuery<WalletData>({
-    queryKey: ["/api/wallet"],
+    queryKey: ["wallet"],
+    queryFn: async () => {
+      const response = await fetch("/api/wallet");
+      return response.json();
+    }
   });
 
   if (isLoading) {
@@ -47,6 +53,11 @@ export default function WalletInfo() {
         <div className="text-sm text-muted-foreground break-all">
           Address: {walletData?.address || "Not connected"}
         </div>
+        {walletData?.balance && (
+          <div className="text-sm text-muted-foreground">
+            Balance: {walletData.balance} ETH
+          </div>
+        )}
       </CardContent>
     </Card>
   );
