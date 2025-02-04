@@ -38,34 +38,6 @@ function getLLM(provider: LLMProvider = "openai"): ChatOpenAI {
       return new ChatOpenAI({
         modelName: "deepseek-chat",
         temperature: 0.7,
-        openAIApiKey: process.env.DEEPSEEK_API_KEY,
-        configuration: {
-          baseURL: "https://api.deepseek.com/v1",
-          defaultHeaders: {
-            "api-key": process.env.DEEPSEEK_API_KEY,
-          },
-        },
-      });
-    case "anthropic":
-      throw new Error("Anthropic support coming soon");
-    default:
-      throw new Error(`Unsupported LLM provider: ${provider}`);
-  }
-}
-function getLLM(provider: LLMProvider = "openai"): ChatOpenAI {
-  switch (provider) {
-    case "openai":
-      return new ChatOpenAI({
-        modelName: "gpt-4",
-        temperature: 0.7,
-      });
-    case "deepseek":
-      if (!process.env.DEEPSEEK_API_KEY) {
-        throw new Error("DEEPSEEK_API_KEY is required for DeepSeek LLM");
-      }
-      return new ChatOpenAI({
-        modelName: "deepseek-chat",
-        temperature: 0.7,
         maxTokens: 2048,
         streaming: true,
         openAIApiKey: process.env.DEEPSEEK_API_KEY,
@@ -77,6 +49,8 @@ function getLLM(provider: LLMProvider = "openai"): ChatOpenAI {
             "Content-Type": "application/json",
           },
         },
+        timeout: 60000, // 60 seconds timeout
+        maxRetries: 3,  // Maximum 3 retries on failure
       });
     case "anthropic":
       throw new Error("Anthropic support coming soon");
@@ -130,14 +104,17 @@ export async function initializeAgent() {
   try {
     // Initialize LLM based on provider
     const llmProvider = process.env.LLM_PROVIDER as LLMProvider || "openai";
+    console.log(`Initializing LLM with provider: ${llmProvider}`);
+
     const llm = getLLM(llmProvider);
-    console.log(`Initialized LLM with provider: ${llmProvider}`);
+    console.log(`Successfully initialized ${llmProvider} LLM`);
 
     // Read existing wallet data if available
     let walletDataStr: string | undefined;
     if (fs.existsSync(WALLET_DATA_FILE)) {
       try {
         walletDataStr = fs.readFileSync(WALLET_DATA_FILE, "utf8");
+        console.log("Successfully loaded existing wallet data");
       } catch (error) {
         console.error("Error reading wallet data:", error);
       }
@@ -200,6 +177,7 @@ export async function initializeAgent() {
     // Save wallet data
     const exportedWallet = await walletProvider.exportWallet();
     fs.writeFileSync(WALLET_DATA_FILE, JSON.stringify(exportedWallet));
+    console.log("Agent initialization completed successfully");
 
     return { agent, config: agentConfig };
   } catch (error) {

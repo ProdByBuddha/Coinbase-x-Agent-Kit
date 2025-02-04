@@ -12,7 +12,6 @@ import { getLangChainTools } from "@coinbase/agentkit-langchain";
 import { HumanMessage } from "@langchain/core/messages";
 import { MemorySaver } from "@langchain/langgraph";
 import { createReactAgent } from "@langchain/langgraph/prebuilt";
-import { ChatOpenAI } from "@langchain/openai";
 import * as dotenv from "dotenv";
 import * as fs from "fs";
 import * as readline from "readline";
@@ -66,9 +65,12 @@ export async function initializeAgent() {
   try {
     // Initialize LLM
     const llmProvider = process.env.LLM_PROVIDER || "openai";
-    const llm = getLLM(llmProvider as LLMProvider);
+    let llm;
+    llm = deepseek(llmProvider as LLMProvider);
+    }
 
     // Read existing wallet data if available
+    let walletDataStr: string | undefined;
     if (fs.existsSync(WALLET_DATA_FILE)) {
       try {
         walletDataStr = fs.readFileSync(WALLET_DATA_FILE, "utf8");
