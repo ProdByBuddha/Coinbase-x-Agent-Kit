@@ -1,4 +1,3 @@
-
 import { cn } from "@/lib/utils";
 import { Card } from "@/components/ui/card";
 import ReactMarkdown from "react-markdown";
@@ -17,15 +16,15 @@ export default function MessageBubble({ content, type, timestamp }: MessageBubbl
 
   return (
     <div className={cn(
-      "flex flex-col gap-1 mb-4",
+      "flex flex-col gap-0.5 mb-2",
       isUser ? "items-end" : "items-start"
     )}>
       <Card className={cn(
-        "max-w-[80%] p-3",
+        "max-w-[80%] px-3 py-1.5",
         isUser ? "bg-primary text-primary-foreground" : "bg-muted text-foreground",
         type === "tool" && "border-l-4 border-accent"
       )}>
-        <div className="prose prose-sm dark:prose-invert max-w-none text-current">
+        <div className="prose prose-sm dark:prose-invert max-w-none text-current whitespace-pre-wrap break-words leading-none">
           <ReactMarkdown>
             {content}
           </ReactMarkdown>
