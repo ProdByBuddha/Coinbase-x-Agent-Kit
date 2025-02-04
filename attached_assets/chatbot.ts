@@ -64,15 +64,20 @@ const WALLET_DATA_FILE = "wallet_data.txt";
  */
 export async function initializeAgent() {
   try {
-    // Initialize LLM using ChatOpenAI with custom configuration
+    // Initialize LLM using ChatOpenAI with OpenRouter configuration
     const llm = new ChatOpenAI({
-      configuration: {
-        baseURL: "https://openrouter.ai/api/v1"
-      },
-      modelName: "deepseek/deepseek-chat",
-      temperature: 0.67,
-      topP: 1,
-      openAIApiKey: process.env.OPENROUTER_API_KEY,
+      modelName: "anthropic/claude-3.5-sonnet",
+      temperature: 0.8,
+      streaming: true,
+      openAIApiKey: process.env.OPENROUTER_API_KEY
+    }, {
+      basePath: "https://openrouter.ai/api/v1",
+      baseOptions: {
+        headers: {
+          "HTTP-Referer": "https://replit.com",
+          "X-Title": "CDP AgentKit Chatbot"
+        }
+      }
     });
 
     let walletDataStr: string | null = null;
