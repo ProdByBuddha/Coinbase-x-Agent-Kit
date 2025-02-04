@@ -90,14 +90,10 @@ export async function initializeAgent() {
       }
     }
 
-    // Get CDP credentials from environment or fallback to default values
-    const cdpApiKeyName = process.env.CDP_API_KEY_NAME || "default_key_name";
-    const cdpApiKeyPrivateKey = process.env.CDP_API_KEY_PRIVATE_KEY?.replace(/\\n/g, "\n") || "default_private_key";
-
-    // Configure CDP Wallet Provider with environment variables
+    // Configure CDP Wallet Provider
     const config = {
-      apiKeyName: cdpApiKeyName,
-      apiKeyPrivateKey: cdpApiKeyPrivateKey,
+      apiKeyName: process.env.CDP_API_KEY_NAME,
+      apiKeyPrivateKey: process.env.CDP_API_KEY_PRIVATE_KEY?.replace(/\\n/g, "\n"),
       cdpWalletData: walletDataStr || undefined,
       networkId: process.env.NETWORK_ID || "base-sepolia",
     };
@@ -113,12 +109,12 @@ export async function initializeAgent() {
         walletActionProvider(),
         erc20ActionProvider(),
         cdpApiActionProvider({
-          apiKeyName: cdpApiKeyName,
-          apiKeyPrivateKey: cdpApiKeyPrivateKey,
+          apiKeyName: process.env.CDP_API_KEY_NAME,
+          apiKeyPrivateKey: process.env.CDP_API_KEY_PRIVATE_KEY?.replace(/\\n/g, "\n"),
         }),
         cdpWalletActionProvider({
-          apiKeyName: cdpApiKeyName,
-          apiKeyPrivateKey: cdpApiKeyPrivateKey,
+          apiKeyName: process.env.CDP_API_KEY_NAME,
+          apiKeyPrivateKey: process.env.CDP_API_KEY_PRIVATE_KEY?.replace(/\\n/g, "\n"),
         }),
       ],
     });
