@@ -1,5 +1,7 @@
+
 import { cn } from "@/lib/utils";
 import { Card } from "@/components/ui/card";
+import ReactMarkdown from "react-markdown";
 
 interface MessageBubbleProps {
   content: string;
@@ -19,11 +21,15 @@ export default function MessageBubble({ content, type, timestamp }: MessageBubbl
       isUser ? "items-end" : "items-start"
     )}>
       <Card className={cn(
-        "max-w-[80%] p-3 text-sm",
+        "max-w-[80%] p-3",
         isUser ? "bg-primary text-primary-foreground" : "bg-muted",
         type === "tool" && "border-l-4 border-accent"
       )}>
-        {content}
+        <div className="prose prose-sm dark:prose-invert max-w-none">
+          <ReactMarkdown>
+            {content}
+          </ReactMarkdown>
+        </div>
       </Card>
       <span className="text-xs text-muted-foreground">
         {timeString}
