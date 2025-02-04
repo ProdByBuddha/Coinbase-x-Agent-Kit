@@ -20,6 +20,22 @@ export const messages = pgTable("messages", {
   metadata: json("metadata")
 });
 
+export const wallets = pgTable("wallets", {
+  id: serial("id").primaryKey(),
+  address: text("address").notNull(),
+  networkId: text("network_id").notNull(),
+  balance: text("balance"),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+  lastUpdated: timestamp("last_updated").notNull().defaultNow(),
+  walletData: json("wallet_data")
+});
+
+// Wallet schemas
+export const insertWalletSchema = createInsertSchema(wallets);
+export const selectWalletSchema = createSelectSchema(wallets);
+export type InsertWallet = typeof wallets.$inferInsert;
+export type SelectWallet = typeof wallets.$inferSelect;
+
 // Chat schemas
 export const insertChatSchema = createInsertSchema(chats);
 export const selectChatSchema = createSelectSchema(chats);
