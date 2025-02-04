@@ -41,6 +41,19 @@ export default function Dashboard() {
   const { toast } = useToast();
   const queryClient = useQueryClient();
 
+  // Handle initial API key population when editing a chat
+  useEffect(() => {
+    if (editingChat && (!editingChat.apiKeys?.cdpApiKeyName || !editingChat.apiKeys?.cdpApiKeyPrivateKey)) {
+      setEditingChat(prev => ({
+        ...prev!,
+        apiKeys: {
+          cdpApiKeyName: import.meta.env.VITE_CDP_API_KEY_NAME || '',
+          cdpApiKeyPrivateKey: import.meta.env.VITE_CDP_API_KEY_PRIVATE_KEY || ''
+        }
+      }));
+    }
+  }, [editingChat]);
+
   const { data: chatInstances = [] } = useQuery<ChatInstance[]>({
     queryKey: ['chats'],
     queryFn: async () => {
@@ -58,8 +71,8 @@ export default function Dashboard() {
         body: JSON.stringify({
           name: `Chat ${chatInstances.length + 1}`,
           apiKeys: {
-            cdpApiKeyName: import.meta.env.VITE_CDP_API_KEY_NAME,
-            cdpApiKeyPrivateKey: import.meta.env.VITE_CDP_API_KEY_PRIVATE_KEY
+            cdpApiKeyName: '',
+            cdpApiKeyPrivateKey: ''
           }
         }),
       });
