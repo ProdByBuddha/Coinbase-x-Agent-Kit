@@ -26,7 +26,10 @@ export function setupWebSocket(io: Server) {
     let config: any;
 
     try {
-      const result = await initializeAgent();
+      const result = await initializeAgent({
+        cdpApiKeyName: process.env.CDP_API_KEY_NAME,
+        cdpApiKeyPrivateKey: process.env.CDP_API_KEY_PRIVATE_KEY
+      });
       agent = result.agent;
       config = result.config;
     } catch (error) {
