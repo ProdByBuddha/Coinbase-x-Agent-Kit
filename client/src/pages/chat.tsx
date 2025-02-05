@@ -20,8 +20,6 @@ import {
   SheetTrigger,
 } from "@/components/ui/sheet";
 import { Link } from "wouter";
-import { CardHeader, CardTitle, CardDescription } from "@/components/ui/card"; // Assuming these components exist
-
 
 type Message = {
   id: string;
@@ -200,16 +198,100 @@ export default function Chat() {
   return (
     <div className="flex h-screen bg-background">
       <div className="flex flex-col w-full max-w-5xl mx-auto p-4">
-        <CardHeader className="flex flex-row items-start justify-between space-y-0 pb-2">
-          <div className="space-y-1">
-            <CardTitle className="text-xl font-bold bg-gradient-to-r from-primary-foreground to-primary bg-clip-text text-transparent">
-              {chatInstance?.name || "Chat"}
-            </CardTitle>
-            <CardDescription className="text-sm opacity-90">
-              Create and manage your CDP interactions
-            </CardDescription>
+        <div className="flex justify-between items-center mb-4">
+          <div className="flex items-center gap-4">
+            <Link href="/dashboard">
+              <Button variant="outline" size="icon" className="neon-border">
+                <ArrowLeft className="h-4 w-4" />
+              </Button>
+            </Link>
+            <h1 className="cyberpunk-text text-xl font-bold">
+              {chatInstance ? chatInstance.name : "Loading..."}
+            </h1>
+            <Button
+              variant="outline"
+              size="sm"
+              className="neon-border"
+              onClick={async () => {
+                if (!confirm("Are you sure you want to clear all messages?"))
+                  return;
+                try {
+                  await fetch(`/api/messages/${chatId}`, { method: "DELETE" });
+                  queryClient.setQueryData(["messages", chatId], []);
+                  toast({
+                    title: "Messages Cleared",
+                    description: "All messages have been cleared successfully.",
+                  });
+                } catch (error) {
+                  toast({
+                    title: "Error",
+                    description: "Failed to clear messages.",
+                    variant: "destructive",
+                  });
+                }
+              }}
+            >
+              Clear Chat
+            </Button>
+            <ModeSelector mode={mode} onChange={handleModeChange} />
+            <Sheet>
+              <SheetTrigger asChild>
+                <Button variant="outline" size="icon" className="neon-border">
+                  <Settings className="h-4 w-4" />
+                </Button>
+              </SheetTrigger>
+              <SheetContent>
+                <SheetHeader>
+                  <SheetTitle>Agent Configuration</SheetTitle>
+                </SheetHeader>
+                <div className="space-y-4 py-4">
+                  <div className="space-y-2">
+                    <label className="text-sm font-medium">
+                      CDP API Key Name
+                    </label>
+                    <Input
+                      value={apiKeys.cdpApiKeyName}
+                      onChange={(e) =>
+                        setApiKeys((prev) => ({
+                          ...prev,
+                          cdpApiKeyName: e.target.value,
+                        }))
+                      }
+                      placeholder="Enter CDP API Key Name"
+                      className="neon-border"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <label className="text-sm font-medium">
+                      CDP Private Key
+                    </label>
+                    <Input
+                      type="password"
+                      value={apiKeys.cdpApiKeyPrivateKey}
+                      onChange={(e) =>
+                        setApiKeys((prev) => ({
+                          ...prev,
+                          cdpApiKeyPrivateKey: e.target.value,
+                        }))
+                      }
+                      placeholder="Enter CDP Private Key"
+                      className="neon-border"
+                    />
+                  </div>
+                  <Button
+                    onClick={saveApiKeys}
+                    className="w-full neon-border"
+                    disabled={updateChatMutation.isPending}
+                  >
+                    Save Configuration
+                  </Button>
+                </div>
+              </SheetContent>
+            </Sheet>
           </div>
-        </CardHeader>
+          <NetworkStatus isConnected={isConnected} />
+        </div>
+
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-4">
           <div className="md:col-span-3">
             <ScrollArea className="h-[70vh] rounded-lg border bg-card p-4 cyberpunk-card">
