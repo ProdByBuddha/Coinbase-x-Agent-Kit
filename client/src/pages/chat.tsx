@@ -225,7 +225,7 @@ export default function Chat() {
               </h1>
               <Sheet>
                 <SheetTrigger asChild>
-                  <Button variant="outline" size="icon" className="neon-border">
+                  <Button variant="outline" size="icon" className="neon-border md:hidden">
                     <Settings className="h-4 w-4" />
                   </Button>
                 </SheetTrigger>
@@ -298,7 +298,7 @@ export default function Chat() {
             </div>
             <Sheet>
               <SheetTrigger asChild>
-                <Button variant="outline" size="icon" className="neon-border">
+                <Button variant="outline" size="icon" className="neon-border hidden md:flex">
                   <Settings className="h-4 w-4" />
                 </Button>
               </SheetTrigger>
