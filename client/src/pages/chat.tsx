@@ -204,21 +204,13 @@ export default function Chat() {
   };
 
   return (
-    <div className="flex h-screen bg-background relative">
-      <Button
-        variant="outline"
-        size="icon"
-        className="absolute top-4 left-4 z-50 md:hidden"
-        onClick={() => document.querySelector('.drawer-trigger')?.click()}
-      >
-        <PanelLeft className="h-4 w-4" />
-      </Button>
+    <div className="flex h-screen bg-background">
       <div className="flex flex-col w-full max-w-5xl mx-auto p-4">
         <div className="flex justify-between items-center mb-4">
           <div className="flex flex-wrap items-center gap-2">
             <Drawer>
               <DrawerTrigger asChild>
-                <Button variant="outline" className="drawer-trigger hidden">
+                <Button variant="outline" className="lg:hidden neon-border">
                   <PanelLeft className="h-4 w-4" />
                 </Button>
               </DrawerTrigger>
