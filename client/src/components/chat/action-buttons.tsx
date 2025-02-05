@@ -63,7 +63,7 @@ export default function ActionButtons({ socket, isConnected }: ActionButtonsProp
           disabled={!isConnected}
           title={action.label}
         >
-          <action.icon className="h-4 w-4 shrink-0" />
+          <action.icon className="h-3 w-3 shrink-0" />
           <span className="transition-opacity duration-200 group-hover:opacity-100 md:group-[.overflow]:opacity-0">
             {action.label}
           </span>
