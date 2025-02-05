@@ -38,19 +38,19 @@ export default function ActionButtons({ socket, isConnected }: ActionButtonsProp
   };
 
   const actions = [
-    { icon: Repeat, label: "Wrap ETH", prompt: "Wrap 0.01 ETH to WETH" },
-    { icon: PieChart, label: "Fetch Feed ID", prompt: "Get price feed ID for ETH/USD" },
-    { icon: DollarSign, label: "Fetch Price", prompt: "Get the current price for ETH/USD" },
+    { icon: Repeat, label: "Wrap ETH", prompt: "Wrap ETH to WETH" },
+    { icon: PieChart, label: "Fetch Feed ID", prompt: "Get price feed ID for currency pair. Ask me for the currency pair." },
+    { icon: DollarSign, label: "Fetch Price", prompt: "Get the current price for currency pair. Ask me for the currency pair." },
     { icon: Wallet, label: "Wallet Details", prompt: "Show my wallet details" },
-    { icon: Send, label: "Send ETH", prompt: "Send 0.01 ETH to 0x..." },
+    { icon: Send, label: "Send ETH", prompt: "Send ETH to wallet address. Ask me for the wallet address." },
     { icon: Coins, label: "ERC20 Balance", prompt: "Check my WETH balance" },
-    { icon: Send, label: "Send ERC20", prompt: "Transfer 0.01 WETH to 0x..." },
-    { icon: Shield, label: "Check Address", prompt: "Check reputation of 0x..." },
+    { icon: Send, label: "Send ERC20", prompt: "Transfer WETH to wallet address. Ask me for the wallet address." },
+    { icon: Shield, label: "Check Address", prompt: "Check reputation of wallet address. Ask me for the wallet address." },
     { icon: Download, label: "Get Test Funds", prompt: "Request faucet funds" },
     { icon: Upload, label: "Deploy Contract", prompt: "Deploy a smart contract" },
     { icon: TokenIcon, label: "Deploy NFT", prompt: "Deploy an NFT contract" },
     { icon: TokenIcon, label: "Deploy Token", prompt: "Deploy an ERC20 token" },
-    { icon: BarChart4, label: "Trade Assets", prompt: "Trade ETH for USDC" },
+    { icon: BarChart4, label: "Trade Assets", prompt: "Trade currency for currency. Ask me for the currencies to be traded." },
   ];
 
   return (
