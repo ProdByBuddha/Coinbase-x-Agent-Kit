@@ -96,7 +96,7 @@ export function registerRoutes(app: Express) {
     try {
       res.json({
         network: process.env.NETWORK_ID || "base-sepolia",
-        address: "0x..." // Get from CDP wallet provider
+        address: wallets.address // Get from CDP wallet provider
       });
     } catch (error) {
       res.status(500).json({ error: "Failed to fetch wallet info" });
