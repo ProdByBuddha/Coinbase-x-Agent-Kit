@@ -25,7 +25,7 @@ export default function MessageBubble({ content, type, timestamp }: MessageBubbl
         isUser ? "bg-primary text-primary-foreground" : "bg-muted text-foreground",
         type === "tool" && "border-l-4 border-accent"
       )}>
-        <div className="prose prose-sm dark:prose-invert max-w-none text-current whitespace-pre-wrap break-words leading-none [&_code]:bg-yellow-400/20 [&_code]:text-yellow-400">
+        <div className="prose prose-sm dark:prose-invert max-w-none text-current whitespace-pre-wrap break-words leading-normal [&_p]:my-0 [&_code]:bg-yellow-400/20 [&_code]:text-yellow-400">
           <ReactMarkdown>
             {content}
           </ReactMarkdown>
