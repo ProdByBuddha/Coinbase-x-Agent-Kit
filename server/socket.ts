@@ -3,6 +3,7 @@ import { initializeAgent } from "../server/chatbot.js";
 import { db } from "@db";
 import { messages } from "@db/schema";
 import { HumanMessage } from "@langchain/core/messages";
+import crypto from 'crypto'; // Added import for crypto.randomUUID
 
 type SocketQuery = {
   chatId: string;
@@ -40,10 +41,8 @@ export function setupWebSocket(io: Server) {
 
     socket.on("chat", async (message: string) => {
       try {
-        const stream = await agent.stream(
-          { messages: [new HumanMessage(message)] },
-          config
-        );
+        const stream = await agent.stream({ messages: [new HumanMessage(message)] }, config);
+        let lastMessage = null;
 
         // Save user message first
         await db.insert(messages).values({
@@ -54,25 +53,26 @@ export function setupWebSocket(io: Server) {
         });
 
         for await (const chunk of stream) {
-          if ("agent" in chunk) {
-            const msg = {
-              chatId,
-              content: chunk.agent.messages[0].content,
-              type: "agent" as const,
-              timestamp: new Date()
-            };
-            await db.insert(messages).values(msg);
-            socket.emit("message", { ...msg, id: Date.now().toString() });
-          } else if ("tools" in chunk) {
-            const msg = {
-              chatId,
+          if ("tools" in chunk) {
+            lastMessage = {
+              id: crypto.randomUUID(),
               content: chunk.tools.messages[0].content,
-              type: "tool" as const,
-              timestamp: new Date()
+              type: "tool",
+              timestamp: new Date(),
             };
-            await db.insert(messages).values(msg);
-            socket.emit("message", { ...msg, id: Date.now().toString() });
+          } else if ("agent" in chunk && chunk.agent.messages[0].content.trim()) {
+            lastMessage = {
+              id: crypto.randomUUID(),
+              content: chunk.agent.messages[0].content,
+              type: "agent",
+              timestamp: new Date(),
+            };
           }
+        }
+
+        if (lastMessage) {
+          await db.insert(messages).values({...lastMessage, chatId}); //Save the last message to the database.
+          socket.emit("message", lastMessage);
         }
       } catch (error) {
         console.error("Message processing error:", error);
