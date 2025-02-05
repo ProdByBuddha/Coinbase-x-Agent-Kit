@@ -5,7 +5,8 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 import { Socket, io } from "socket.io-client";
-import { Settings, Send, ArrowLeft } from "lucide-react";
+import { Settings, Send, ArrowLeft, PanelLeft } from "lucide-react";
+import { Drawer, DrawerContent, DrawerHeader, DrawerTitle, DrawerTrigger } from "@/components/ui/drawer";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import ModeSelector from "@/components/chat/mode-selector";
 import MessageList from "@/components/chat/message-list";
@@ -206,7 +207,22 @@ export default function Chat() {
     <div className="flex h-screen bg-background">
       <div className="flex flex-col w-full max-w-5xl mx-auto p-4">
         <div className="flex justify-between items-center mb-4">
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-2">
+            <Drawer>
+              <DrawerTrigger asChild>
+                <Button variant="outline" className="lg:hidden neon-border">
+                  <PanelLeft className="h-4 w-4" />
+                </Button>
+              </DrawerTrigger>
+              <DrawerContent className="h-[80vh]">
+                <DrawerHeader>
+                  <DrawerTitle>Chat Navigation</DrawerTitle>
+                </DrawerHeader>
+                <div className="px-4">
+                  <ActionButtons socket={socket} isConnected={isConnected} />
+                </div>
+              </DrawerContent>
+            </Drawer>
             <Link href="/dashboard">
               <Button variant="outline" size="icon" className="neon-border">
                 <ArrowLeft className="h-4 w-4" />
