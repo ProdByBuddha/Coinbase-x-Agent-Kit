@@ -59,7 +59,7 @@ export default function ActionButtons({ socket, isConnected }: ActionButtonsProp
         <Button
           key={index}
           variant="outline"
-          className="group relative flex items-center gap-2 w-full min-w-0 overflow-hidden whitespace-nowrap"
+          className="group relative flex items-center gap-2 w-full min-w-0 overflow-hidden whitespace-nowrap text-xs"
           onClick={() => handleAction(action.prompt)}
           disabled={!isConnected}
           title={action.label}
