@@ -213,7 +213,7 @@ export default function Dashboard() {
                 size="lg"
                 disabled={createChatMutation.isPending}
               >
-                <Plus className="mr-2 h-5 w-5 group-hover:rotate-90 transition-transform duration-300 text-primary" />
+                <Plus className="mr-1 h-5 w-5 group-hover:rotate-90 transition-transform duration-300 text-primary" />
                 Create New Chat
                 <div className="absolute inset-0 bg-white/5 opacity-0 group-hover:opacity-100 transition-all duration-300" />
               </Button>
