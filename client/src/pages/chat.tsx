@@ -306,7 +306,7 @@ export default function Chat() {
             </ScrollArea>
           </div>
           <div className="md:col-span-1 space-y-4">
-            <WalletInfo />
+            {/* <WalletInfo /> */}
             <ActionButtons socket={socket} isConnected={isConnected} />
           </div>
         </div>
