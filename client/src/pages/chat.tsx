@@ -120,10 +120,6 @@ export default function Chat() {
 
     newSocket.on("connect", () => {
       setIsConnected(true);
-      toast({
-        title: "Connected to server",
-        description: "Ready to chat!",
-      });
     });
 
     newSocket.on("disconnect", () => {
