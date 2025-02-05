@@ -198,7 +198,7 @@ export default function Chat() {
     <div className="fixed inset-0 flex bg-background overflow-hidden">
       <div className="flex flex-col w-full max-w-5xl mx-auto p-4">
         {/* Header Section */}
-        <div className="flex justify-between items-center mb-4">
+        <div className="flex justify-between items-center mb-2 md:mb-4">
           <div className="flex flex-wrap items-center gap-2">
             <Drawer>
               <DrawerTrigger asChild>
@@ -357,7 +357,7 @@ export default function Chat() {
         {/* Main Chat Area */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-4">
           <div className="md:col-span-3">
-            <ScrollArea className="h-[70vh] rounded-lg border bg-card p-4 cyberpunk-card animate-gradient-x">
+            <ScrollArea className="h-[55vh] md:h-[70vh] rounded-lg border bg-card p-4 cyberpunk-card animate-gradient-x">
               <MessageList messages={messages} isLoading={isStreaming} />
             </ScrollArea>
           </div>
