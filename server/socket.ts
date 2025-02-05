@@ -55,14 +55,12 @@ export function setupWebSocket(io: Server) {
         for await (const chunk of stream) {
           if ("tools" in chunk) {
             lastMessage = {
-              id: crypto.randomUUID(),
               content: chunk.tools.messages[0].content,
               type: "tool",
               timestamp: new Date(),
             };
           } else if ("agent" in chunk && chunk.agent.messages[0].content.trim()) {
             lastMessage = {
-              id: crypto.randomUUID(),
               content: chunk.agent.messages[0].content,
               type: "agent",
               timestamp: new Date(),
