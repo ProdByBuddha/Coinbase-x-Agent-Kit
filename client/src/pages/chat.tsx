@@ -205,8 +205,8 @@ export default function Chat() {
   return (
     <div className="flex h-screen bg-background">
       <div className="flex flex-col w-full max-w-5xl mx-auto p-4">
-        <div className="flex justify-between items-center mb-4">
-          <div className="flex items-center gap-4">
+        <div className="flex flex-wrap justify-between items-center mb-4 gap-2">
+          <div className="flex flex-wrap items-center gap-2 md:gap-4">
             <Link href="/dashboard">
               <Button variant="outline" size="icon" className="neon-border">
                 <ArrowLeft className="h-4 w-4" />
@@ -301,12 +301,11 @@ export default function Chat() {
 
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-4">
           <div className="md:col-span-3">
-            <ScrollArea className="h-[70vh] rounded-lg border bg-card p-4 cyberpunk-card">
+            <ScrollArea className="h-[60vh] md:h-[70vh] rounded-lg border bg-card p-2 md:p-4 cyberpunk-card">
               <MessageList messages={messages} isLoading={isStreaming} />
             </ScrollArea>
           </div>
-          <div className="md:col-span-1 space-y-4">
-            {/* <WalletInfo /> */}
+          <div className="md:col-span-1 space-y-2 md:space-y-4">
             <ActionButtons socket={socket} isConnected={isConnected} />
           </div>
         </div>
