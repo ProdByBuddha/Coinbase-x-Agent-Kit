@@ -49,7 +49,7 @@ export default function ActionButtons({ socket, isConnected }: ActionButtonsProp
     { icon: Upload, label: "Deploy Contract", prompt: "Deploy a smart contract" },
     { icon: TokenIcon, label: "Deploy NFT", prompt: "Deploy an NFT contract" },
     { icon: TokenIcon, label: "Deploy Token", prompt: "Deploy an ERC20 token" },
-    { icon: BarChart4, label: "Trade Assets", prompt: "Trade currency for currency. Ask me for the currencies to be traded." },
+//    { icon: BarChart4, label: "Trade Assets", prompt: "Trade currency for currency. Ask me for the currencies to be traded." },
   ];
 
   return (
