@@ -21,9 +21,9 @@ export default function MessageBubble({ content, type, timestamp }: MessageBubbl
     )}>
       {type === "agent" && <span className="text-xs text-muted-foreground ml-3 mb-1">Agent:</span>}
       <Card className={cn(
-        "max-w-[80%] p-4 shadow-sm border border-gray-100 hover:shadow-md transition-shadow duration-200", //Incorporated provided change here.
-        isUser ? "bg-primary text-primary-foreground" : "bg-muted text-foreground",
-        type === "tool" && "border-l-4 border-accent"
+        "max-w-[80%] p-4 backdrop-blur-sm animate-in slide-in-from-bottom-2 duration-300",
+        isUser ? "bg-gradient-to-br from-primary to-primary/80 text-primary-foreground shadow-lg" : "bg-white/90 text-foreground shadow-md",
+        type === "tool" && "border-l-4 border-accent ring-1 ring-accent/20"
       )}>
         <div className="prose prose-sm dark:prose-invert max-w-none text-current whitespace-pre-wrap break-words leading-normal [&_p]:my-0 [&_code]:bg-yellow-400/20 [&_code]:text-yellow-400">
           <ReactMarkdown>
