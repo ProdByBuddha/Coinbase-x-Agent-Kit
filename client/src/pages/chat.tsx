@@ -206,7 +206,7 @@ export default function Chat() {
               </Button>
             </Link>
             <h1 className="cyberpunk-text text-xl font-bold">
-              {chatInstance?.name ?? "Chat"}
+              {chatInstance?.name || "Chat"}
             </h1>
             <Button
               variant="outline"
