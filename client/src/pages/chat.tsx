@@ -11,6 +11,7 @@ import ModeSelector from "@/components/chat/mode-selector";
 import MessageList from "@/components/chat/message-list";
 import WalletInfo from "@/components/chat/wallet-info";
 import NetworkStatus from "@/components/chat/network-status";
+import ActionButtons from "@/components/chat/action-buttons";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 import { Link } from "wouter";
 
@@ -249,8 +250,9 @@ export default function Chat() {
               <MessageList messages={messages} />
             </ScrollArea>
           </div>
-          <div className="md:col-span-1">
+          <div className="md:col-span-1 space-y-4">
             <WalletInfo />
+            <ActionButtons socket={socket} isConnected={isConnected} />
           </div>
         </div>
 
