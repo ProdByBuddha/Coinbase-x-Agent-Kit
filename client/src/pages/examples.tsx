@@ -69,12 +69,12 @@ export default function Examples() {
       </Card>
 
       <h2 className="text-2xl font-bold mt-8 mb-4 cyberpunk-text">For Artists & Creators</h2>
-      <div className="flex gap-4 mb-4">
+      <div className="flex flex-col sm:flex-row gap-4 mb-4">
         <Link href="/music-tutorials">
-          <Button className="neon-border">View Music Distribution Tutorials</Button>
+          <Button className="neon-border w-full sm:w-auto">Music Distribution Tutorials</Button>
         </Link>
         <Link href="/physical-art-tutorials">
-          <Button className="neon-border">View Physical Art Tutorials</Button>
+          <Button className="neon-border w-full sm:w-auto">Physical Art Tutorials</Button>
         </Link>
       </div>
 
