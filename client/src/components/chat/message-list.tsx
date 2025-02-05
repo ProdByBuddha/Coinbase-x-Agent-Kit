@@ -1,3 +1,4 @@
+import { useEffect, useRef } from "react";
 import MessageBubble from "./message-bubble";
 
 type Message = {
@@ -13,6 +14,16 @@ interface MessageListProps {
 }
 
 export default function MessageList({ messages, isLoading }: MessageListProps) {
+  const messagesEndRef = useRef<HTMLDivElement>(null);
+
+  const scrollToBottom = () => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  };
+
+  useEffect(() => {
+    scrollToBottom();
+  }, [messages, isLoading]);
+
   return (
     <div className="flex flex-col">
       {messages.map(message => (
@@ -39,6 +50,7 @@ export default function MessageList({ messages, isLoading }: MessageListProps) {
           </Card>
         </div>
       )}
+      <div ref={messagesEndRef} />
     </div>
   );
 }
