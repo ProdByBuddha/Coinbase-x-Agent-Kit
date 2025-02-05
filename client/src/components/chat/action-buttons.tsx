@@ -53,12 +53,12 @@ export default function ActionButtons({ socket, isConnected }: ActionButtonsProp
   ];
 
   return (
-    <div className="grid grid-cols-2 gap-2 p-4">
+    <div className="grid grid-cols-2 gap-1.5 p-2">
       {actions.map((action, index) => (
         <Button
           key={index}
           variant="outline"
-          className="group relative flex items-center gap-2 w-full min-w-0 overflow-hidden whitespace-nowrap text-[10px]"
+          className="group relative flex items-center gap-1 w-full min-w-0 overflow-hidden whitespace-nowrap text-[clamp(8px,1.5vw,12px)] px-2 py-1"
           onClick={() => handleAction(action.prompt)}
           disabled={!isConnected}
           title={action.label}
