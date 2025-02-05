@@ -266,11 +266,11 @@ export default function Chat() {
                 </SheetContent>
               </Sheet>
             </div>
-            <div className="flex flex-wrap gap-2 w-full md:w-auto">
+            <div className="flex items-center gap-2">
               <Button
                 variant="outline"
                 size="sm"
-                className="neon-border w-auto"
+                className="neon-border"
                 onClick={async () => {
                   if (!confirm("Are you sure you want to clear all messages?"))
                     return;
@@ -292,9 +292,7 @@ export default function Chat() {
               >
                 Clear Chat
               </Button>
-              <div className="w-full md:w-auto">
-                <ModeSelector mode={mode} onChange={handleModeChange} />
-              </div>
+              <ModeSelector mode={mode} onChange={handleModeChange} />
             </div>
             <Sheet>
               <SheetTrigger asChild>
