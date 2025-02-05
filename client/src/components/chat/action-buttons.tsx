@@ -12,7 +12,7 @@ import {
   Shield,
   Download,
   Upload,
-  Token,
+  Coins as TokenIcon,
   BarChart4,
 } from "lucide-react";
 
@@ -48,8 +48,8 @@ export default function ActionButtons({ socket, isConnected }: ActionButtonsProp
     { icon: Shield, label: "Check Address", prompt: "Check reputation of 0x..." },
     { icon: Download, label: "Get Test Funds", prompt: "Request faucet funds" },
     { icon: Upload, label: "Deploy Contract", prompt: "Deploy a smart contract" },
-    { icon: Token, label: "Deploy NFT", prompt: "Deploy an NFT contract" },
-    { icon: Token, label: "Deploy Token", prompt: "Deploy an ERC20 token" },
+    { icon: TokenIcon, label: "Deploy NFT", prompt: "Deploy an NFT contract" },
+    { icon: TokenIcon, label: "Deploy Token", prompt: "Deploy an ERC20 token" },
     { icon: BarChart4, label: "Trade Assets", prompt: "Trade ETH for USDC" },
   ];
 
