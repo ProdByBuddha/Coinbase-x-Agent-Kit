@@ -190,6 +190,30 @@ export default function Chat() {
                 <ArrowLeft className="h-4 w-4" />
               </Button>
             </Link>
+            <Button 
+              variant="outline" 
+              size="sm" 
+              className="neon-border"
+              onClick={async () => {
+                if (!confirm("Are you sure you want to clear all messages?")) return;
+                try {
+                  await fetch(`/api/messages/${chatId}`, { method: 'DELETE' });
+                  queryClient.setQueryData(['messages', chatId], []);
+                  toast({
+                    title: "Messages Cleared",
+                    description: "All messages have been cleared successfully."
+                  });
+                } catch (error) {
+                  toast({
+                    title: "Error",
+                    description: "Failed to clear messages.",
+                    variant: "destructive"
+                  });
+                }
+              }}
+            >
+              Clear Chat
+            </Button>
             <h1 className="cyberpunk-text text-xl font-bold">
               {chatInstance?.name || "Chat"}
             </h1>

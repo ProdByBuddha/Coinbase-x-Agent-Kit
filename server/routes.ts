@@ -92,6 +92,16 @@ export function registerRoutes(app: Express) {
     }
   });
 
+  app.delete("/api/messages/:chatId", async (req, res) => {
+    try {
+      const { chatId } = req.params;
+      await db.delete(messages).where(eq(messages.chatId, parseInt(chatId)));
+      res.json({ success: true });
+    } catch (error) {
+      res.status(500).json({ error: "Failed to clear messages" });
+    }
+  });
+
   app.get("/api/wallet", async (req, res) => {
     try {
       const wallet = await db.query.wallets.findFirst({
