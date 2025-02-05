@@ -1,7 +1,9 @@
 import type { Server } from "socket.io";
 import { initializeAgent } from "../server/chatbot.js";
 import { db } from "@db";
-import { messages } from "@db/schema";
+import { messages, wallets } from "@db/schema";
+import { eq } from "drizzle-orm";
+import fs from "fs";
 import { HumanMessage } from "@langchain/core/messages";
 
 type SocketQuery = {
@@ -44,6 +46,32 @@ export function setupWebSocket(io: Server) {
           { messages: [new HumanMessage(message)] },
           config
         );
+
+        // Get wallet data from file
+        let walletData;
+        try {
+          walletData = JSON.parse(fs.readFileSync("wallet_data.txt", "utf8"));
+        } catch (error) {
+          console.error("Error reading wallet data:", error);
+        }
+
+        // Update wallet info if available
+        if (walletData) {
+          try {
+            await db.update(wallets)
+              .set({
+                networkId: walletData.networkId || process.env.NETWORK_ID || "base-sepolia",
+                address: walletData.address || "Not connected",
+                balance_eth: walletData.balance_eth || "0",
+                balance_wei: walletData.balance_wei || "0",
+                lastUpdated: new Date()
+              })
+              .where(eq(wallets.address, walletData.address))
+              .returning();
+          } catch (error) {
+            console.error("Error updating wallet:", error);
+          }
+        }
 
         // Save user message first
         await db.insert(messages).values({
