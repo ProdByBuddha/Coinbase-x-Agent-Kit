@@ -39,7 +39,7 @@ export default function ActionButtons({ socket, isConnected }: ActionButtonsProp
   const actions = [
     { icon: Repeat, label: "Wrap ETH", prompt: "Wrap ETH to WETH" },
     { icon: PieChart, label: "Fetch Feed ID", prompt: "Get price feed ID for currency pair. Ask me for the currency pair." },
-    { icon: DollarSign, label: "Fetch Price", prompt: "Get the current price for currency pair. Ask me for the currency pair." },
+    { icon: DollarSign, label: "Fetch Price", prompt: "Get the current price for currency. Ask me for the currency." },
     { icon: Wallet, label: "Wallet Details", prompt: "Show my wallet details" },
     { icon: Send, label: "Send ETH", prompt: "Send ETH to wallet address. Ask me for the wallet address." },
     { icon: Coins, label: "ERC20 Balance", prompt: "Check my WETH balance" },
