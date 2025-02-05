@@ -8,12 +8,12 @@ interface ModeSelectorProps {
 
 export default function ModeSelector({ mode, onChange }: ModeSelectorProps) {
   return (
-    <div className="flex gap-2 w-full">
+    <div className="flex gap-2 w-auto">
       <Button
         variant={mode === "chat" ? "default" : "outline"}
         onClick={() => onChange("chat")}
         size="sm"
-        className="flex gap-1.5 flex-1 md:flex-none text-xs md:text-sm py-1 h-7 md:h-8"
+        className="flex gap-1.5 w-auto text-xs md:text-sm py-1 h-7 md:h-8"
       >
         <MessageSquare className="h-3 w-3 md:h-4 md:w-4" />
         Chat
@@ -22,7 +22,7 @@ export default function ModeSelector({ mode, onChange }: ModeSelectorProps) {
         variant={mode === "auto" ? "default" : "outline"}
         onClick={() => onChange("auto")}
         size="sm"
-        className="flex gap-1.5 flex-1 md:flex-none text-xs md:text-sm py-1 h-7 md:h-8"
+        className="flex gap-1.5 w-auto text-xs md:text-sm py-1 h-7 md:h-8"
       >
         <Bot className="h-3 w-3 md:h-4 md:w-4" />
         Auto
