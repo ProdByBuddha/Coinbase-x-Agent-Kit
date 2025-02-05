@@ -128,11 +128,6 @@ export default function Chat() {
 
     newSocket.on("disconnect", () => {
       setIsConnected(false);
-      toast({
-        title: "Disconnected from server",
-        description: "Trying to reconnect...",
-        variant: "destructive",
-      });
     });
 
     newSocket.on("message", (msg: Message) => {
