@@ -21,7 +21,7 @@ export default function MessageBubble({ content, type, timestamp }: MessageBubbl
     )}>
       {type === "agent" && <span className="text-xs text-muted-foreground ml-3 mb-1">Agent:</span>}
       <Card className={cn(
-        "max-w-[80%] p-3",
+        "max-w-[80%] p-4 shadow-sm border border-gray-100 hover:shadow-md transition-shadow duration-200", //Incorporated provided change here.
         isUser ? "bg-primary text-primary-foreground" : "bg-muted text-foreground",
         type === "tool" && "border-l-4 border-accent"
       )}>
