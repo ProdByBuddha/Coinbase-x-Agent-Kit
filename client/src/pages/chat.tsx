@@ -12,7 +12,13 @@ import MessageList from "@/components/chat/message-list";
 import WalletInfo from "@/components/chat/wallet-info";
 import NetworkStatus from "@/components/chat/network-status";
 import ActionButtons from "@/components/chat/action-buttons";
-import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
+import {
+  Sheet,
+  SheetContent,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from "@/components/ui/sheet";
 import { Link } from "wouter";
 
 type Message = {
@@ -50,20 +56,20 @@ export default function Chat() {
   const queryClient = useQueryClient();
 
   const { data: chatInstance } = useQuery<ChatInstance>({
-    queryKey: ['chat', chatId],
+    queryKey: ["chat", chatId],
     queryFn: async () => {
       const response = await fetch(`/api/chats/${chatId}`);
-      if (!response.ok) throw new Error('Failed to fetch chat');
+      if (!response.ok) throw new Error("Failed to fetch chat");
       return response.json();
     },
     enabled: !!chatId,
   });
 
   const { data: messages = [] } = useQuery<Message[]>({
-    queryKey: ['messages', chatId],
+    queryKey: ["messages", chatId],
     queryFn: async () => {
       const response = await fetch(`/api/messages/${chatId}`);
-      if (!response.ok) throw new Error('Failed to fetch messages');
+      if (!response.ok) throw new Error("Failed to fetch messages");
       return response.json();
     },
     enabled: !!chatId,
@@ -72,18 +78,18 @@ export default function Chat() {
   const updateChatMutation = useMutation({
     mutationFn: async () => {
       const response = await fetch(`/api/chats/${chatId}`, {
-        method: 'PATCH',
-        headers: { 'Content-Type': 'application/json' },
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           apiKeys,
           name: chatInstance?.name,
         }),
       });
-      if (!response.ok) throw new Error('Failed to update chat');
+      if (!response.ok) throw new Error("Failed to update chat");
       return response.json();
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['chat', chatId] });
+      queryClient.invalidateQueries({ queryKey: ["chat", chatId] });
       toast({
         title: "API Keys Updated",
         description: "The chat will reconnect with the new configuration.",
@@ -93,10 +99,12 @@ export default function Chat() {
 
   useEffect(() => {
     if (chatInstance?.apiKeys) {
-      setApiKeys(chatInstance.apiKeys);
+      setApiKeys({
+        cdpApiKeyName: chatInstance.apiKeys.cdpApiKeyName || "",
+        cdpApiKeyPrivateKey: chatInstance.apiKeys.cdpApiKeyPrivateKey || "",
+      });
     }
   }, [chatInstance]);
-
   useEffect(() => {
     if (!chatId) return;
 
@@ -126,7 +134,11 @@ export default function Chat() {
     });
 
     newSocket.on("message", (msg: Message) => {
-      queryClient.invalidateQueries({ queryKey: ['messages', chatId] });
+      queryClient.invalidateQueries({ queryKey: ["messages", chatId] });
+      queryClient.setQueryData(["messages", chatId], (old: Message[] = []) => [
+        ...old,
+        msg,
+      ]); // Update messages with the new message
       setIsLoading(false);
     });
 
@@ -158,7 +170,10 @@ export default function Chat() {
       type: "user",
       timestamp: new Date(),
     };
-    queryClient.setQueryData(['messages', chatId], (old: Message[] = []) => [...old, tempMessage]);
+    queryClient.setQueryData(["messages", chatId], (old: Message[] = []) => [
+      ...old,
+      tempMessage,
+    ]);
     socket.emit("chat", trimmedInput);
     setInput("");
   };
@@ -190,33 +205,34 @@ export default function Chat() {
                 <ArrowLeft className="h-4 w-4" />
               </Button>
             </Link>
-            <Button 
-              variant="outline" 
-              size="sm" 
+            <h1 className="cyberpunk-text text-xl font-bold">
+              {chatInstance?.name ?? chats.name ?? 'Active Chat'}
+            </h1>
+            <Button
+              variant="outline"
+              size="sm"
               className="neon-border"
               onClick={async () => {
-                if (!confirm("Are you sure you want to clear all messages?")) return;
+                if (!confirm("Are you sure you want to clear all messages?"))
+                  return;
                 try {
-                  await fetch(`/api/messages/${chatId}`, { method: 'DELETE' });
-                  queryClient.setQueryData(['messages', chatId], []);
+                  await fetch(`/api/messages/${chatId}`, { method: "DELETE" });
+                  queryClient.setQueryData(["messages", chatId], []);
                   toast({
                     title: "Messages Cleared",
-                    description: "All messages have been cleared successfully."
+                    description: "All messages have been cleared successfully.",
                   });
                 } catch (error) {
                   toast({
                     title: "Error",
                     description: "Failed to clear messages.",
-                    variant: "destructive"
+                    variant: "destructive",
                   });
                 }
               }}
             >
               Clear Chat
             </Button>
-            <h1 className="cyberpunk-text text-xl font-bold">
-              {chatInstance?.name || "Chat"}
-            </h1>
             <ModeSelector mode={mode} onChange={handleModeChange} />
             <Sheet>
               <SheetTrigger asChild>
@@ -230,32 +246,40 @@ export default function Chat() {
                 </SheetHeader>
                 <div className="space-y-4 py-4">
                   <div className="space-y-2">
-                    <label className="text-sm font-medium">CDP API Key Name</label>
+                    <label className="text-sm font-medium">
+                      CDP API Key Name
+                    </label>
                     <Input
                       value={apiKeys.cdpApiKeyName}
-                      onChange={(e) => setApiKeys(prev => ({
-                        ...prev,
-                        cdpApiKeyName: e.target.value
-                      }))}
+                      onChange={(e) =>
+                        setApiKeys((prev) => ({
+                          ...prev,
+                          cdpApiKeyName: e.target.value,
+                        }))
+                      }
                       placeholder="Enter CDP API Key Name"
                       className="neon-border"
                     />
                   </div>
                   <div className="space-y-2">
-                    <label className="text-sm font-medium">CDP Private Key</label>
+                    <label className="text-sm font-medium">
+                      CDP Private Key
+                    </label>
                     <Input
                       type="password"
                       value={apiKeys.cdpApiKeyPrivateKey}
-                      onChange={(e) => setApiKeys(prev => ({
-                        ...prev,
-                        cdpApiKeyPrivateKey: e.target.value
-                      }))}
+                      onChange={(e) =>
+                        setApiKeys((prev) => ({
+                          ...prev,
+                          cdpApiKeyPrivateKey: e.target.value,
+                        }))
+                      }
                       placeholder="Enter CDP Private Key"
                       className="neon-border"
                     />
                   </div>
-                  <Button 
-                    onClick={saveApiKeys} 
+                  <Button
+                    onClick={saveApiKeys}
                     className="w-full neon-border"
                     disabled={updateChatMutation.isPending}
                   >
@@ -283,13 +307,13 @@ export default function Chat() {
         <form onSubmit={handleSubmit} className="flex gap-2">
           <Input
             value={input}
-            onChange={e => setInput(e.target.value)}
+            onChange={(e) => setInput(e.target.value)}
             placeholder="Type your message..."
             disabled={!isConnected || mode === "auto" || isLoading}
             className="flex-1 neon-border"
           />
-          <Button 
-            type="submit" 
+          <Button
+            type="submit"
             disabled={!isConnected || mode === "auto" || isLoading}
             className="neon-border"
           >
