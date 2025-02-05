@@ -1,3 +1,4 @@
+
 import { useQuery } from "@tanstack/react-query";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Wallet, Network } from "lucide-react";
@@ -49,28 +50,32 @@ export default function WalletInfo() {
           Wallet Info
         </CardTitle>
       </CardHeader>
-      <CardContent className="space-y-4">
-        <div className="flex items-center gap-2">
-          <Network className="h-4 w-4 text-muted-foreground" />
-          <span>Network: {walletData?.networkId || "base-sepolia"}</span>
+      <CardContent className="space-y-2">
+        <div className="text-sm">
+          <span className="text-muted-foreground">Provider:</span> cdp_wallet_provider
         </div>
-        <div className="text-sm text-muted-foreground whitespace-normal break-words">
-          Address: {walletData?.address || "Not connected"}
+        <div className="text-sm break-all">
+          <span className="text-muted-foreground">Address:</span> {walletData?.address}
+        </div>
+        <div className="text-sm">
+          <span className="text-muted-foreground">Network:</span>
+          <div className="pl-2 text-sm">
+            Protocol Family: evm<br />
+            Network ID: {walletData?.networkId}<br />
+            Chain ID: 84532
+          </div>
         </div>
         {walletData?.balance_eth && (
-          <div className="text-sm text-muted-foreground break-words">
-            <span className="pl-1">Ξ </span>
-            {walletData.balance_eth} ETH
-            <br />
-            <span className="pl-1">ⓦ </span>
-            {walletData.balance_wei} WEI
+          <div className="text-sm">
+            <span className="text-muted-foreground">Balance:</span>
+            <div className="pl-2">
+              {walletData.balance_eth} ETH<br />
+              {walletData.balance_wei} WEI
+            </div>
           </div>
         )}
-        <div className="text-xs text-muted-foreground/60 break-words">
-          Last Updated:{" "}
-          {walletData?.lastUpdated
-            ? new Date(walletData.lastUpdated).toLocaleString()
-            : "Never"}
+        <div className="text-xs text-muted-foreground/60">
+          Last Updated: {walletData?.lastUpdated ? new Date(walletData.lastUpdated).toLocaleString() : "Never"}
         </div>
       </CardContent>
     </Card>
