@@ -219,14 +219,19 @@ export default function Dashboard() {
             <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
               {chatInstances.map((chat) => (
                 <Card key={chat.id} className="group hover:shadow-lg transition-all duration-300 border-border/50 backdrop-blur-sm bg-background/95">
-                  <CardHeader className="flex flex-row items-start justify-between space-y-0 pb-2">
+                  <CardHeader className="flex flex-col md:flex-row items-start justify-between space-y-2 md:space-y-0 pb-2">
                     <div className="space-y-1">
                       <CardTitle className="text-xl font-bold bg-gradient-to-r from-primary-foreground to-primary bg-clip-text text-transparent">{chat.name}</CardTitle>
                       <CardDescription className="text-sm opacity-90">
                         Created {new Date(chat.createdAt).toLocaleDateString()}
                       </CardDescription>
                     </div>
-                    <div className="flex gap-2">
+                    <div className="flex flex-wrap gap-2 w-full md:w-auto justify-start">
+                      <Link href={`/chat/${chat.id}`} className="w-full md:w-auto">
+                        <Button variant="outline" className="w-full md:w-auto hover:border-primary/50 transition-colors">
+                          Open Chat
+                        </Button>
+                      </Link>
                       <Dialog>
                         <DialogTrigger asChild>
                           <Button 
