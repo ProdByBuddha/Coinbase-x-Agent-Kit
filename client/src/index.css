@@ -1,3 +1,17 @@
+
+@layer base {
+  button {
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+}
+
+@layer utilities {
+  .overflow\:opacity-0 {
+    opacity: 0;
+  }
+}
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;

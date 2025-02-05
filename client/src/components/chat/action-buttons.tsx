@@ -59,12 +59,15 @@ export default function ActionButtons({ socket, isConnected }: ActionButtonsProp
         <Button
           key={index}
           variant="outline"
-          className="flex items-center gap-2 w-full"
+          className="group relative flex items-center gap-2 w-full min-w-0 overflow-hidden whitespace-nowrap"
           onClick={() => handleAction(action.prompt)}
           disabled={!isConnected}
+          title={action.label}
         >
-          <action.icon className="h-4 w-4" />
-          {action.label}
+          <action.icon className="h-4 w-4 shrink-0" />
+          <span className="transition-opacity duration-200 group-hover:opacity-100 md:group-[.overflow]:opacity-0">
+            {action.label}
+          </span>
         </Button>
       ))}
     </div>
