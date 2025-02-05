@@ -19,6 +19,7 @@ export default function MessageBubble({ content, type, timestamp }: MessageBubbl
       "flex flex-col gap-1 mb-4",
       isUser ? "items-end" : "items-start"
     )}>
+      {type === "agent" && <span className="text-xs text-muted-foreground ml-3 mb-1">Agent:</span>}
       <Card className={cn(
         "max-w-[80%] p-3",
         isUser ? "bg-primary text-primary-foreground" : "bg-muted text-foreground",
