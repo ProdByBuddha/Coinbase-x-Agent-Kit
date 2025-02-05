@@ -229,7 +229,7 @@ export default function Chat() {
               </Button>
             </Link>
             <div className="flex items-center gap-2">
-              <h1 className="cyberpunk-text text-xl font-bold">
+              <h1 className="text-xl font-bold text-primary">
                 {chatInstance ? chatInstance.name : "Loading..."}
               </h1>
               <Sheet>
