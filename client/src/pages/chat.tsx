@@ -319,9 +319,9 @@ export default function Chat() {
           <div className="hidden md:block">
             <NetworkStatus isConnected={isConnected} />
           </div>
-        </div>
-        <div className="md:hidden mb-2">
-          <NetworkStatus isConnected={isConnected} />
+          <div className="md:hidden absolute top-4 right-4">
+            <NetworkStatus isConnected={isConnected} />
+          </div>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-4">
