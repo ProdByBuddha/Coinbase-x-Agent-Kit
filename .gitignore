@@ -61,3 +61,6 @@ vite.config.ts.*
 # Temp files
 *.tmp
 *~
+
+# Project specific
+attached_assets/
