@@ -228,9 +228,53 @@ export default function Chat() {
                 <ArrowLeft className="h-4 w-4" />
               </Button>
             </Link>
-            <h1 className="cyberpunk-text text-xl font-bold">
-              {chatInstance ? chatInstance.name : "Loading..."}
-            </h1>
+            <div className="flex items-center gap-2">
+              <h1 className="cyberpunk-text text-xl font-bold">
+                {chatInstance ? chatInstance.name : "Loading..."}
+              </h1>
+              <Sheet>
+                <SheetTrigger asChild>
+                  <Button variant="outline" size="icon" className="neon-border md:hidden">
+                    <Settings className="h-4 w-4" />
+                  </Button>
+                </SheetTrigger>
+                <SheetContent>
+                  <SheetHeader>
+                    <SheetTitle>Agent Configuration</SheetTitle>
+                  </SheetHeader>
+                  <div className="space-y-4 py-4">
+                    <div className="space-y-2">
+                      <label className="text-sm font-medium">CDP API Key Name</label>
+                      <Input
+                        value={apiKeys.cdpApiKeyName}
+                        onChange={(e) => setApiKeys((prev) => ({
+                          ...prev,
+                          cdpApiKeyName: e.target.value,
+                        }))}
+                        placeholder="Enter CDP API Key Name"
+                        className="neon-border"
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <label className="text-sm font-medium">CDP Private Key</label>
+                      <Input
+                        type="password"
+                        value={apiKeys.cdpApiKeyPrivateKey}
+                        onChange={(e) => setApiKeys((prev) => ({
+                          ...prev,
+                          cdpApiKeyPrivateKey: e.target.value,
+                        }))}
+                        placeholder="Enter CDP Private Key"
+                        className="neon-border"
+                      />
+                    </div>
+                    <Button onClick={saveApiKeys} className="w-full neon-border" disabled={updateChatMutation.isPending}>
+                      Save Configuration
+                    </Button>
+                  </div>
+                </SheetContent>
+              </Sheet>
+            </div>
             <div className="flex flex-wrap gap-2 w-full md:w-auto">
               <Button
                 variant="outline"
@@ -263,7 +307,7 @@ export default function Chat() {
             </div>
             <Sheet>
               <SheetTrigger asChild>
-                <Button variant="outline" size="icon" className="neon-border">
+                <Button variant="outline" size="icon" className="neon-border hidden md:flex">
                   <Settings className="h-4 w-4" />
                 </Button>
               </SheetTrigger>
