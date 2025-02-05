@@ -83,14 +83,17 @@ export function setupWebSocket(io: Server) {
 
         for await (const chunk of stream) {
           if ("agent" in chunk) {
-            const msg = {
-              chatId,
-              content: chunk.agent.messages[0].content,
-              type: "agent" as const,
-              timestamp: new Date()
-            };
-            await db.insert(messages).values(msg);
-            socket.emit("message", { ...msg, id: Date.now().toString() });
+            const response = chunk.agent.messages[0].content;
+            if (response && response.trim()) { // Added empty response check
+              const msg = {
+                chatId,
+                content: response,
+                type: "agent" as const,
+                timestamp: new Date()
+              };
+              await db.insert(messages).values(msg);
+              socket.emit("message", { ...msg, id: Date.now().toString() });
+            }
           } else if ("tools" in chunk) {
             const msg = {
               chatId,
