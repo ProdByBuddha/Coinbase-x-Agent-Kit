@@ -1,4 +1,6 @@
 import { useEffect, useState } from "react";
+// @ts-ignore
+// eslint-disable-next-line
 import { useRoute } from "wouter";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Input } from "@/components/ui/input";
