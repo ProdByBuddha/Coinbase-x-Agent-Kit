@@ -2,8 +2,8 @@ import type { Express } from "express";
 import { createServer } from "http";
 import { Server } from "socket.io";
 import { setupWebSocket } from "./socket.js";
-import { db } from "@db";
-import { messages, chats, wallets } from "@db/schema";
+import { db } from "../db";
+import { messages, chats, wallets } from "../db/schema";
 import { eq, desc } from "drizzle-orm";
 
 export function registerRoutes(app: Express) {
