@@ -316,6 +316,11 @@ export default function Chat() {
               </SheetContent>
             </Sheet>
           </div>
+          <div className="hidden md:block">
+            <NetworkStatus isConnected={isConnected} />
+          </div>
+        </div>
+        <div className="md:hidden mb-2">
           <NetworkStatus isConnected={isConnected} />
         </div>
 
