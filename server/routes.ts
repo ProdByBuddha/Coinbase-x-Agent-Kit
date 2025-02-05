@@ -94,9 +94,15 @@ export function registerRoutes(app: Express) {
 
   app.get("/api/wallet", async (req, res) => {
     try {
+      const wallet = await db.query.wallets.findFirst({
+        orderBy: (wallets, { desc }) => [desc(wallets.lastUpdated)]
+      });
+      
       res.json({
-        network: process.env.NETWORK_ID || "base-sepolia",
-        address: wallets.address // Get from CDP wallet provider
+        network: wallet?.networkId || process.env.NETWORK_ID || "base-sepolia",
+        address: wallet?.address || "Not connected",
+        balance_eth: wallet?.balance_eth,
+        lastUpdated: wallet?.lastUpdated
       });
     } catch (error) {
       res.status(500).json({ error: "Failed to fetch wallet info" });
