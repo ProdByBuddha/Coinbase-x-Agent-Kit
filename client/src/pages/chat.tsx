@@ -223,16 +223,6 @@ export default function Chat() {
               <h1 className="text-xl font-bold text-primary">
                 {chatInstance ? chatInstance.name : "Loading..."}
               </h1>
-              <Sheet>
-                <SheetTrigger asChild>
-                  <Button variant="outline" size="icon" className="neon-border md:hidden">
-                    <Settings className="h-4 w-4" />
-                  </Button>
-                </SheetTrigger>
-                <SheetContent>
-                  <SheetHeader>
-                    <SheetTitle>Agent Configuration</SheetTitle>
-                  </SheetHeader>
                   <div className="space-y-4 py-4">
                     <div className="space-y-2">
                       <label className="text-sm font-medium">CDP API Key Name</label>
@@ -293,13 +283,12 @@ export default function Chat() {
                 Clear Chat
               </Button>
               <ModeSelector mode={mode} onChange={handleModeChange} />
-            </div>
-            <Sheet>
-              <SheetTrigger asChild>
-                <Button variant="outline" size="icon" className="neon-border hidden md:flex">
-                  <Settings className="h-4 w-4" />
-                </Button>
-              </SheetTrigger>
+              <Sheet>
+                <SheetTrigger asChild>
+                  <Button variant="outline" size="icon" className="neon-border">
+                    <Settings className="h-4 w-4" />
+                  </Button>
+                </SheetTrigger>
               <SheetContent>
                 <SheetHeader>
                   <SheetTitle>Agent Configuration</SheetTitle>
