@@ -231,32 +231,36 @@ export default function Chat() {
             <h1 className="cyberpunk-text text-xl font-bold">
               {chatInstance ? chatInstance.name : "Loading..."}
             </h1>
-            <Button
-              variant="outline"
-              size="sm"
-              className="neon-border"
-              onClick={async () => {
-                if (!confirm("Are you sure you want to clear all messages?"))
-                  return;
-                try {
-                  await fetch(`/api/messages/${chatId}`, { method: "DELETE" });
-                  queryClient.setQueryData(["messages", chatId], []);
-                  toast({
-                    title: "Messages Cleared",
-                    description: "All messages have been cleared successfully.",
-                  });
-                } catch (error) {
-                  toast({
-                    title: "Error",
-                    description: "Failed to clear messages.",
-                    variant: "destructive",
-                  });
-                }
-              }}
-            >
-              Clear Chat
-            </Button>
-            <ModeSelector mode={mode} onChange={handleModeChange} />
+            <div className="flex flex-wrap gap-2 w-full md:w-auto">
+              <Button
+                variant="outline"
+                size="sm"
+                className="neon-border w-full md:w-auto"
+                onClick={async () => {
+                  if (!confirm("Are you sure you want to clear all messages?"))
+                    return;
+                  try {
+                    await fetch(`/api/messages/${chatId}`, { method: "DELETE" });
+                    queryClient.setQueryData(["messages", chatId], []);
+                    toast({
+                      title: "Messages Cleared",
+                      description: "All messages have been cleared successfully.",
+                    });
+                  } catch (error) {
+                    toast({
+                      title: "Error",
+                      description: "Failed to clear messages.",
+                      variant: "destructive",
+                    });
+                  }
+                }}
+              >
+                Clear Chat
+              </Button>
+              <div className="w-full md:w-auto">
+                <ModeSelector mode={mode} onChange={handleModeChange} />
+              </div>
+            </div>
             <Sheet>
               <SheetTrigger asChild>
                 <Button variant="outline" size="icon" className="neon-border">
