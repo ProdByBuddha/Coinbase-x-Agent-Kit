@@ -66,16 +66,18 @@ export async function initializeAgent() {
   try {
     // Initialize LLM using ChatOpenAI with OpenRouter configuration
     const llm = new ChatOpenAI({
-      modelName: "deepseek-chat",
+      modelName: "qwen/qwen-2.5-72b-instruct",
       streaming: true,
-      apiKey: process.env.DEEPSEEK_API_KEY,
+      apiKey: process.env.OPENROUTER_API_KEY,
       configuration: {
-      baseURL: "https://api.deepseek.com/v1",
+      baseURL: "https://openrouter.ai/api/v1",
       defaultHeaders: {
         "Content-Type": "application/json"
       }
       },
-      temperature: 0.8
+     topP: 0.9,
+     temperature: 0.6,
+     frequencyPenalty: 1
     });
 
     let walletDataStr: string | null = null;
