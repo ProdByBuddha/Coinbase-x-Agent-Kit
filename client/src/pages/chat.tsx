@@ -47,6 +47,7 @@ export default function Chat() {
   const [mode, setMode] = useState<"chat" | "auto">("chat");
   const [isConnected, setIsConnected] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [isStreaming, setIsStreaming] = useState(false); // Added loading state
   const [apiKeys, setApiKeys] = useState({
     cdpApiKeyName: "",
     cdpApiKeyPrivateKey: "",
@@ -140,6 +141,11 @@ export default function Chat() {
         msg,
       ]); // Update messages with the new message
       setIsLoading(false);
+      setIsStreaming(false); //Added to stop loading after message received
+    });
+
+    newSocket.on("streaming", () => {
+      setIsStreaming(true); // Start loading indicator
     });
 
     newSocket.on("error", (error: string) => {
@@ -149,6 +155,7 @@ export default function Chat() {
         variant: "destructive",
       });
       setIsLoading(false);
+      setIsStreaming(false); //Added to stop loading after error
     });
 
     setSocket(newSocket);
@@ -295,7 +302,7 @@ export default function Chat() {
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-4">
           <div className="md:col-span-3">
             <ScrollArea className="h-[70vh] rounded-lg border bg-card p-4 cyberpunk-card">
-              <MessageList messages={messages} />
+              <MessageList messages={messages} isLoading={isStreaming} />
             </ScrollArea>
           </div>
           <div className="md:col-span-1 space-y-4">
