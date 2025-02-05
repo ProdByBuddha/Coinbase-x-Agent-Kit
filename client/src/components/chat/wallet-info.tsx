@@ -1,4 +1,3 @@
-
 import { useQuery } from "@tanstack/react-query";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Wallet, Network } from "lucide-react";
@@ -7,6 +6,7 @@ interface WalletData {
   address: string;
   networkId: string;
   balance_eth?: string;
+  balance_wei?: string;
   lastUpdated: string;
 }
 
@@ -19,7 +19,7 @@ export default function WalletInfo() {
         throw new Error("Failed to fetch wallet data");
       }
       return response.json();
-    }
+    },
   });
 
   if (isLoading) {
@@ -58,12 +58,19 @@ export default function WalletInfo() {
           Address: {walletData?.address || "Not connected"}
         </div>
         {walletData?.balance_eth && (
-          <div className="text-sm text-muted-foreground">
-            Balance: {walletData.balance_eth} ETH
+          <div className="text-sm text-muted-foreground break-words">
+            <span className="pl-1">Ξ </span>
+            {walletData.balance_eth} ETH
+            <br />
+            <span className="pl-1">ⓦ </span>
+            {walletData.balance_wei} WEI
           </div>
         )}
-        <div className="text-xs text-muted-foreground/60">
-          Last Updated: {walletData?.lastUpdated ? new Date(walletData.lastUpdated).toLocaleString() : "Never"}
+        <div className="text-xs text-muted-foreground/60 break-words">
+          Last Updated:{" "}
+          {walletData?.lastUpdated
+            ? new Date(walletData.lastUpdated).toLocaleString()
+            : "Never"}
         </div>
       </CardContent>
     </Card>

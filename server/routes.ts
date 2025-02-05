@@ -102,6 +102,7 @@ export function registerRoutes(app: Express) {
         network: wallet?.networkId || process.env.NETWORK_ID || "base-sepolia",
         address: wallet?.address || "Not connected",
         balance_eth: wallet?.balance_eth,
+        balance_wei: wallet?.balance_wei,
         lastUpdated: wallet?.lastUpdated
       });
     } catch (error) {
