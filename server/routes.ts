@@ -110,9 +110,28 @@ export function registerRoutes(app: Express) {
     }
   });
 
-  // Assuming the wallet update logic is elsewhere and needs modification.  This is a placeholder.  The actual implementation would depend on where the walletData comes from.
-  //  For example, it could be from a POST request to /api/wallet
+  app.put("/api/wallet", async (req, res) => {
+    try {
+      const { networkId, address, balance_eth, balance_wei } = req.body;
+      if (!networkId || !address || !balance_eth || !balance_wei) {
+        return res.status(400).json({ error: "Missing wallet data" });
+      }
 
+      const updatedWallet = await db.update(wallets)
+        .set({
+          networkId,
+          address,
+          balance_eth,
+          balance_wei,
+          lastUpdated: new Date()
+        })
+        .returning();
+
+      res.json(updatedWallet);
+    } catch (error) {
+      res.status(500).json({ error: "Failed to update wallet" });
+    }
+  });
 
   return httpServer;
 }
