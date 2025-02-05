@@ -330,7 +330,7 @@ export default function Chat() {
               <MessageList messages={messages} isLoading={isStreaming} />
             </ScrollArea>
           </div>
-          <div className="md:col-span-1 space-y-4">
+          <div className="hidden md:block md:col-span-1 space-y-4">
             {/* <WalletInfo /> */}
             <ActionButtons socket={socket} isConnected={isConnected} />
           </div>
