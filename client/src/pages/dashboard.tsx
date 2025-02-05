@@ -290,10 +290,7 @@ export default function Dashboard() {
                               />
                             </div>
                             <Button 
-                              onClick={() => {
-                                handleUpdateChat();
-                                setEditingChat(null);
-                              }}
+                              onClick={handleUpdateChat}
                               className="w-full"
                               disabled={updateChatMutation.isPending}
                             >
