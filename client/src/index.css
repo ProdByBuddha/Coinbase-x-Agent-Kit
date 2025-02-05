@@ -1,4 +1,3 @@
-
 @layer base {
   button {
     overflow: hidden;
@@ -22,11 +21,56 @@
     background-size: 200% 200%;
     animation: gradient-x 15s ease infinite;
   }
-  
+
   @keyframes gradient-x {
     0% { background-position: 0% 50%; }
     50% { background-position: 100% 50%; }
     100% { background-position: 0% 50%; }
+  }
+
+  .text-glow {
+    text-shadow: 0 0 10px var(--primary-glow-color, rgba(79, 97, 205, 0.5));
+  }
+
+  .neon-pulse {
+    animation: neon-pulse 2s ease-in-out infinite;
+  }
+
+  @keyframes neon-pulse {
+    0%, 100% {
+      box-shadow: 0 0 5px rgba(79, 97, 205, 0.5),
+                0 0 10px rgba(79, 97, 205, 0.3);
+    }
+    50% {
+      box-shadow: 0 0 15px rgba(79, 97, 205, 0.8),
+                0 0 20px rgba(79, 97, 205, 0.5);
+    }
+  }
+
+  .matrix-bg {
+    position: relative;
+    overflow: hidden;
+  }
+
+  .matrix-bg::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(rgba(0, 0, 0, 0.8), rgba(0, 0, 0, 0.8)),
+                repeating-linear-gradient(0deg,
+                  transparent 0%,
+                  rgba(32, 193, 107, 0.05) 50%,
+                  transparent 100%);
+    background-size: 100% 2px;
+    animation: matrix-scan 8s linear infinite;
+  }
+
+  @keyframes matrix-scan {
+    0% { background-position: 0 0; }
+    100% { background-position: 0 100%; }
   }
 }
 
@@ -128,5 +172,50 @@
     100% {
       transform: translate(0);
     }
+  }
+
+  .message-bubble {
+    @apply relative p-4 rounded-lg mb-4 backdrop-blur-sm;
+    background: rgba(0, 0, 0, 0.3);
+    border: 1px solid rgba(79, 97, 205, 0.2);
+  }
+
+  .message-bubble.user {
+    @apply ml-auto mr-2 border-primary/30;
+    max-width: 80%;
+  }
+
+  .message-bubble.agent {
+    @apply mr-auto ml-2 border-secondary/30;
+    max-width: 80%;
+  }
+
+  .message-bubble.tool {
+    @apply mx-auto border-accent/30;
+    max-width: 90%;
+  }
+
+  .message-bubble::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    border-radius: inherit;
+    pointer-events: none;
+    z-index: -1;
+  }
+
+  .message-bubble.user::before {
+    box-shadow: 0 0 15px rgba(79, 97, 205, 0.1);
+  }
+
+  .message-bubble.agent::before {
+    box-shadow: 0 0 15px rgba(124, 58, 237, 0.1);
+  }
+
+  .message-bubble.tool::before {
+    box-shadow: 0 0 15px rgba(45, 212, 191, 0.1);
   }
 }

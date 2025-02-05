@@ -197,17 +197,18 @@ export default function Chat() {
   return (
     <div className="fixed inset-0 flex bg-background overflow-hidden">
       <div className="flex flex-col w-full max-w-5xl mx-auto p-4">
+        {/* Header Section */}
         <div className="flex justify-between items-center mb-4">
           <div className="flex flex-wrap items-center gap-2">
             <Drawer>
               <DrawerTrigger asChild>
-                <Button variant="outline" className="lg:hidden neon-border">
+                <Button variant="outline" className="lg:hidden neon-border glitch-effect">
                   <PanelLeft className="h-4 w-4" />
                 </Button>
               </DrawerTrigger>
-              <DrawerContent className="h-[90vh] bg-background">
-                <DrawerHeader className="border-b">
-                  <DrawerTitle className="text-lg font-semibold">Chat Navigation</DrawerTitle>
+              <DrawerContent className="h-[90vh] bg-background/95 backdrop-blur-sm">
+                <DrawerHeader className="border-b border-primary/20">
+                  <DrawerTitle className="text-lg font-semibold cyberpunk-text">Chat Navigation</DrawerTitle>
                 </DrawerHeader>
                 <div className="p-4 flex flex-col gap-4">
                   <ActionButtons socket={socket} isConnected={isConnected} />
@@ -215,27 +216,27 @@ export default function Chat() {
               </DrawerContent>
             </Drawer>
             <Link href="/dashboard">
-              <Button variant="outline" size="icon" className="neon-border">
+              <Button variant="outline" size="icon" className="neon-border glitch-effect">
                 <ArrowLeft className="h-4 w-4" />
               </Button>
             </Link>
             <div className="flex items-center gap-2">
-              <h1 className="text-xl font-bold text-primary">
-                {chatInstance ? chatInstance.name : "Loading..."}
+              <h1 className="text-xl font-bold cyberpunk-text">
+                {chatInstance ? chatInstance.name : "Initializing..."}
               </h1>
               <Sheet>
                 <SheetTrigger asChild>
-                  <Button variant="outline" size="icon" className="neon-border md:hidden">
+                  <Button variant="outline" size="icon" className="neon-border glitch-effect md:hidden">
                     <Settings className="h-4 w-4" />
                   </Button>
                 </SheetTrigger>
-                <SheetContent>
+                <SheetContent className="bg-background/95 backdrop-blur-sm">
                   <SheetHeader>
-                    <SheetTitle>Agent Configuration</SheetTitle>
+                    <SheetTitle className="cyberpunk-text">Agent Configuration</SheetTitle>
                   </SheetHeader>
                   <div className="space-y-4 py-4">
                     <div className="space-y-2">
-                      <label className="text-sm font-medium">CDP API Key Name</label>
+                      <label className="text-sm font-medium text-primary/80">CDP API Key Name</label>
                       <Input
                         value={apiKeys.cdpApiKeyName}
                         onChange={(e) => setApiKeys((prev) => ({
@@ -247,7 +248,7 @@ export default function Chat() {
                       />
                     </div>
                     <div className="space-y-2">
-                      <label className="text-sm font-medium">CDP Private Key</label>
+                      <label className="text-sm font-medium text-primary/80">CDP Private Key</label>
                       <Input
                         type="password"
                         value={apiKeys.cdpApiKeyPrivateKey}
@@ -270,7 +271,7 @@ export default function Chat() {
               <Button
                 variant="outline"
                 size="sm"
-                className="neon-border"
+                className="neon-border glitch-effect"
                 onClick={async () => {
                   if (!confirm("Are you sure you want to clear all messages?"))
                     return;
@@ -296,19 +297,17 @@ export default function Chat() {
             </div>
             <Sheet>
               <SheetTrigger asChild>
-                <Button variant="outline" size="icon" className="neon-border hidden md:flex">
+                <Button variant="outline" size="icon" className="neon-border glitch-effect hidden md:flex">
                   <Settings className="h-4 w-4" />
                 </Button>
               </SheetTrigger>
-              <SheetContent>
+              <SheetContent className="bg-background/95 backdrop-blur-sm">
                 <SheetHeader>
-                  <SheetTitle>Agent Configuration</SheetTitle>
+                  <SheetTitle className="cyberpunk-text">Agent Configuration</SheetTitle>
                 </SheetHeader>
                 <div className="space-y-4 py-4">
                   <div className="space-y-2">
-                    <label className="text-sm font-medium">
-                      CDP API Key Name
-                    </label>
+                    <label className="text-sm font-medium text-primary/80">CDP API Key Name</label>
                     <Input
                       value={apiKeys.cdpApiKeyName}
                       onChange={(e) =>
@@ -322,9 +321,7 @@ export default function Chat() {
                     />
                   </div>
                   <div className="space-y-2">
-                    <label className="text-sm font-medium">
-                      CDP Private Key
-                    </label>
+                    <label className="text-sm font-medium text-primary/80">CDP Private Key</label>
                     <Input
                       type="password"
                       value={apiKeys.cdpApiKeyPrivateKey}
@@ -357,18 +354,19 @@ export default function Chat() {
           </div>
         </div>
 
+        {/* Main Chat Area */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-4">
           <div className="md:col-span-3">
-            <ScrollArea className="h-[70vh] rounded-lg border bg-card p-4 cyberpunk-card">
+            <ScrollArea className="h-[70vh] rounded-lg border bg-card p-4 cyberpunk-card animate-gradient-x">
               <MessageList messages={messages} isLoading={isStreaming} />
             </ScrollArea>
           </div>
           <div className="hidden md:block md:col-span-1 space-y-4">
-            {/* <WalletInfo /> */}
             <ActionButtons socket={socket} isConnected={isConnected} />
           </div>
         </div>
 
+        {/* Chat Input */}
         <form onSubmit={handleSubmit} className="flex gap-2">
           <Input
             value={input}
@@ -380,7 +378,7 @@ export default function Chat() {
           <Button
             type="submit"
             disabled={!isConnected || mode === "auto" || isLoading}
-            className="neon-border"
+            className="neon-border glitch-effect"
           >
             <Send className="h-4 w-4" />
           </Button>
