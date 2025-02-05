@@ -1,14 +1,14 @@
+
 # Dependencies
 node_modules
 dist
-
-# OS Files
-.DS_Store
+.config
 
 # Build files
 server/public
-vite.config.ts.*
 *.tar.gz
+build/
+*.tsbuildinfo
 
 # Environment & Secrets
 .env
@@ -37,3 +37,27 @@ yarn-error.log*
 # Database
 *.sqlite
 *.db
+
+# IDE & OS Files
+.DS_Store
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Replit specific
+.replit
+.cache/
+.upm/
+.breakpoints
+replit.nix
+.config/
+generated-icon.png
+
+# TypeScript
+*.tsbuildinfo
+vite.config.ts.*
+
+# Temp files
+*.tmp
+*~
