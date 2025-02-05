@@ -207,7 +207,7 @@ export default function Chat() {
     <div className="flex h-screen bg-background">
       <div className="flex flex-col w-full max-w-5xl mx-auto p-4">
         <div className="flex justify-between items-center mb-4">
-          <div className="flex items-center gap-2">
+          <div className="flex flex-wrap items-center gap-2">
             <Drawer>
               <DrawerTrigger asChild>
                 <Button variant="outline" className="lg:hidden neon-border">

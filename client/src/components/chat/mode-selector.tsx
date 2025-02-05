@@ -20,7 +20,7 @@ export default function ModeSelector({ mode, onChange }: ModeSelectorProps) {
       <Button
         variant={mode === "auto" ? "default" : "outline"}
         onClick={() => onChange("auto")}
-        className="flex gap-2"
+        className="flex gap-2 flex-1 md:flex-none"
       >
         <Bot className="h-4 w-4" />
         Auto Mode
