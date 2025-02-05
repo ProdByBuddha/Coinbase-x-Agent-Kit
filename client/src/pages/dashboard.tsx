@@ -194,7 +194,7 @@ export default function Dashboard() {
         </Sidebar>
 
         <main className="flex-1 overflow-auto">
-          <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-10 max-w-full lg:max-w-7xl">
+          <div className="mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-10">
             <div className="flex flex-col space-y-6 md:flex-row md:items-center md:justify-between md:space-y-0">
               <div className="space-y-3">
                 <h1 className="text-5xl font-bold tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-primary via-primary/90 to-primary-foreground animate-gradient-x">
