@@ -270,7 +270,7 @@ export default function Chat() {
               <Button
                 variant="outline"
                 size="sm"
-                className="neon-border w-full md:w-auto"
+                className="neon-border w-auto"
                 onClick={async () => {
                   if (!confirm("Are you sure you want to clear all messages?"))
                     return;
