@@ -209,7 +209,7 @@ export default function Dashboard() {
               </div>
               <Button 
                 onClick={() => createChatMutation.mutate()}
-                className="relative overflow-hidden group hover:scale-105 hover:shadow-lg transition-all duration-300 border-border/50 backdrop-blur-sm bg-background/95 text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-primary-foreground to-primary"
+                className="relative overflow-hidden group hover:scale-105 hover:shadow-lg transition-all duration-300 border-border/50 backdrop-blur-sm bg-background/95 text-base font-bold bg-clip-text text-transparent bg-gradient-to-r from-primary-foreground to-primary"
                 size="lg"
                 disabled={createChatMutation.isPending}
               >
