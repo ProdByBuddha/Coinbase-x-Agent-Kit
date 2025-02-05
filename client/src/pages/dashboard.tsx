@@ -222,10 +222,10 @@ export default function Dashboard() {
             <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
               {chatInstances.map((chat) => (
                 <Card key={chat.id} className="group hover:shadow-lg transition-all duration-300 border-border/50 backdrop-blur-sm bg-background/95">
-                  <CardHeader className="flex flex-row items-center justify-between space-y-0">
-                    <div>
-                      <CardTitle className="text-xl font-semibold">{chat.name}</CardTitle>
-                      <CardDescription>
+                  <CardHeader className="flex flex-row items-start justify-between space-y-0 pb-2">
+                    <div className="space-y-1">
+                      <CardTitle className="text-xl font-bold bg-gradient-to-r from-primary-foreground to-primary bg-clip-text text-transparent">{chat.name}</CardTitle>
+                      <CardDescription className="text-sm opacity-90">
                         Created {new Date(chat.createdAt).toLocaleDateString()}
                       </CardDescription>
                     </div>
@@ -235,7 +235,7 @@ export default function Dashboard() {
                           <Button 
                             variant="outline" 
                             size="icon"
-                            className="hover:border-primary/50"
+                            className="hover:border-primary/50 transition-colors"
                             onClick={() => {
                               setEditingChat(chat);
                               setNewChatName(chat.name);
@@ -313,13 +313,13 @@ export default function Dashboard() {
                       </Button>
                     </div>
                   </CardHeader>
-                  <CardContent>
-                    <div className="flex items-center text-sm text-muted-foreground">
-                      <Info className="h-4 w-4 mr-2" />
+                  <CardContent className="pt-2">
+                    <div className="flex items-center text-sm">
+                      <Info className="h-4 w-4 mr-2 text-primary-foreground" />
                       {(import.meta.env.VITE_CDP_API_KEY_NAME) ? (
-                        <span className="text-success">API Keys Configured</span>
+                        <span className="text-success font-medium">API Keys Configured</span>
                       ) : (
-                        <span className="text-warning">API Keys Not Configured</span>
+                        <span className="text-warning font-medium">API Keys Not Configured</span>
                       )}
                     </div>
                   </CardContent>
