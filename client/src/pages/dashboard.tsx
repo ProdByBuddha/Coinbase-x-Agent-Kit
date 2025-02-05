@@ -161,12 +161,8 @@ export default function Dashboard() {
           <SidebarContent>
             <SidebarMenu className="flex flex-col h-full">
               <div className="flex-1">
-                <SidebarMenuItem>
-                  <Link href="/dashboard">
-                    <SidebarMenuButton className="w-full justify-start font-bold">
-                      Dashboard
-                    </SidebarMenuButton>
-                  </Link>
+                <SidebarMenuItem className="pt-4 pl-2 text-lg font-bold text-primary-foreground">
+                  Chats
                 </SidebarMenuItem>
                 {chatInstances.map((chat) => (
                 <SidebarMenuItem key={chat.id}>
