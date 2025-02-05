@@ -3,7 +3,7 @@ import { createServer } from "http";
 import { Server } from "socket.io";
 import { setupWebSocket } from "./socket.js";
 import { db } from "@db";
-import { messages, chats } from "@db/schema";
+import { messages, chats, wallets } from "@db/schema";
 import { eq, desc } from "drizzle-orm";
 
 export function registerRoutes(app: Express) {
@@ -57,13 +57,13 @@ export function registerRoutes(app: Express) {
       const { id } = req.params;
       const chatId = parseInt(id);
       console.log(`Attempting to delete chat with ID: ${chatId}`);
-      
+
       // First delete all messages associated with this chat
       await db.delete(messages).where(eq(messages.chatId, chatId));
-      
+
       // Then delete the chat
       const deleteResult = await db.delete(chats).where(eq(chats.id, chatId));
-      
+
       if (deleteResult) {
         console.log(`Successfully deleted chat ${chatId}`);
         res.json({ success: true });
@@ -97,7 +97,7 @@ export function registerRoutes(app: Express) {
       const wallet = await db.query.wallets.findFirst({
         orderBy: (wallets, { desc }) => [desc(wallets.lastUpdated)]
       });
-      
+
       res.json({
         network: wallet?.networkId || process.env.NETWORK_ID || "base-sepolia",
         address: wallet?.address || "Not connected",
@@ -109,6 +109,10 @@ export function registerRoutes(app: Express) {
       res.status(500).json({ error: "Failed to fetch wallet info" });
     }
   });
+
+  // Assuming the wallet update logic is elsewhere and needs modification.  This is a placeholder.  The actual implementation would depend on where the walletData comes from.
+  //  For example, it could be from a POST request to /api/wallet
+
 
   return httpServer;
 }
