@@ -34,7 +34,7 @@ export default function ActionButtons({ socket, isConnected }: ActionButtonsProp
       return;
     }
 
-    socket.emit("message", { content: prompt });
+    socket.emit("chat", prompt);
   };
 
   const actions = [
