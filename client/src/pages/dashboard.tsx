@@ -98,6 +98,7 @@ export default function Dashboard() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['chats'] });
+      queryClient.invalidateQueries({ queryKey: ['chat'] });
       setEditingChat(null);
       setNewChatName("");
       toast({
