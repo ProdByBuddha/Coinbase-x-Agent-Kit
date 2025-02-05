@@ -52,6 +52,24 @@ export function registerRoutes(app: Express) {
     }
   });
 
+  app.get("/api/chats/:id", async (req, res) => {
+    try {
+      const { id } = req.params;
+      const chat = await db.query.chats.findFirst({
+        where: eq(chats.id, parseInt(id)),
+      });
+
+      if (!chat) {
+        return res.status(404).json({ error: "Chat not found" });
+      }
+
+      res.json(chat);
+    } catch (error) {
+      res.status(500).json({ error: "Failed to fetch chat" });
+    }
+  });
+
+
   app.delete("/api/chats/:id", async (req, res) => {
     try {
       const { id } = req.params;
