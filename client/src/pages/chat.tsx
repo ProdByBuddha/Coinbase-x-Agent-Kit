@@ -214,11 +214,11 @@ export default function Chat() {
                   <PanelLeft className="h-4 w-4" />
                 </Button>
               </DrawerTrigger>
-              <DrawerContent className="h-[80vh]">
-                <DrawerHeader>
-                  <DrawerTitle>Chat Navigation</DrawerTitle>
+              <DrawerContent className="h-[90vh] bg-background">
+                <DrawerHeader className="border-b">
+                  <DrawerTitle className="text-lg font-semibold">Chat Navigation</DrawerTitle>
                 </DrawerHeader>
-                <div className="px-4">
+                <div className="p-4 flex flex-col gap-4">
                   <ActionButtons socket={socket} isConnected={isConnected} />
                 </div>
               </DrawerContent>
